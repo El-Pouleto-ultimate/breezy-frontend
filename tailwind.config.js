@@ -1,24 +1,32 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  // Tailwind scanne ces fichiers pour purger les classes inutilisées en prod
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+module.exports = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     extend: {
-      // Couleurs personnalisées Breezy
       colors: {
         breezy: {
-          dark: "#1a1a1a",
-          muted: "#6b6b68",
-          border: "#d0cfc9",
-          bg: "#f5f4f1",
-          card: "#edece9",
-          panel: "#e2e1de",
-        },
+          bg: '#F7F9FA',
+          white: '#FFFFFF',
+          dark: '#0F1419',
+          primary: '#1D9BF0',
+          border: '#EFF3F4',
+          muted: '#536471',
+          hover: '#F7F9FA',
+          like: '#F91880',
+          repost: '#00BA7C',
+        }
       },
       fontFamily: {
-        sans: ["DM Sans", "sans-serif"],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
+      screens: {
+        'xs': '390px',
+      }
     },
   },
   plugins: [],
-};
+}
