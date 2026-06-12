@@ -63,6 +63,14 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
         post={post}
         isOpen={showComments}
         onClose={() => setShowComments(false)}
+        onCommentAdded={(newComment) => {
+          if (onUpdate) {
+            onUpdate({
+              ...post,
+              commentsCount: (post.commentsCount || 0) + 1
+            })
+          }
+        }}
       />
     </>
   )

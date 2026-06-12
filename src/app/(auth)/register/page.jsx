@@ -9,11 +9,11 @@ import { register } from '@/services/authService'
 import { validateRegisterForm } from '@/utils/validators'
 
 export default function RegisterPage() {
-  const [form, setForm]         = useState({ email:'', password:'', username:'' })
-  const [errors, setErrors]     = useState({})
-  const [apiErr, setApiErr]     = useState('')
-  const [loading, setLoading]   = useState(false)
-  const { setUser, saveToken }  = useAuth()
+  const [form, setForm] = useState({ email: '', password: '', username: '' })
+  const [errors, setErrors] = useState({})
+  const [apiErr, setApiErr] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { setUser, saveToken } = useAuth()
   const router = useRouter()
 
   const upd = f => e => setForm(p => ({ ...p, [f]: e.target.value }))
@@ -36,12 +36,13 @@ export default function RegisterPage() {
 
   return (
     <div className="w-full px-8 py-8">
-      <h1 className="text-2xl font-black text-center text-breezy-dark mb-1 tracking-tight">Breezy</h1>
+      <Link href="/">
+        <h1 className="text-2xl font-black text-center text-breezy-dark mb-1 tracking-tight">Breezy</h1>
+      </Link>
       <div className="h-px bg-breezy-border mb-12" />
 
       <div className="max-w-sm mx-auto">
-        <h2 className="text-2xl font-bold text-breezy-dark mb-1">Créer un compte</h2>
-        <p className="text-breezy-muted text-sm mb-8">Rejoignez la conversation.</p>
+        <h2 className="text-2xl font-bold text-breezy-dark mb-8">Créer un compte</h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input label="Nom d'utilisateur" type="text" placeholder="votre_pseudo"

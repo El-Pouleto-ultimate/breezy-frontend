@@ -19,7 +19,12 @@ export function usePosts() {
     finally { setLoading(false) }
   }, [])
 
-  useEffect(() => { load(1) }, [load])
+  useEffect(() => { 
+    load(1) 
+    const handleRefresh = () => load(1)
+    window.addEventListener('postCreated', handleRefresh)
+    return () => window.removeEventListener('postCreated', handleRefresh)
+  }, [load])
 
   return {
     posts, loading, error,

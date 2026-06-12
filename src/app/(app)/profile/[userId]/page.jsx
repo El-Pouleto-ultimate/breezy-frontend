@@ -9,10 +9,11 @@ import { getUserById } from '@/services/userService'
 import { getUserPosts } from '@/services/postService'
 
 export default function OtherProfilePage() {
-  const { userId }         = useParams()
-  const [profile, setP]    = useState(null)
-  const [posts, setPosts]  = useState([])
+  const { userId } = useParams()
+  const [profile, setP] = useState(null)
+  const [posts, setPosts] = useState([])
   const [loading, setLoad] = useState(true)
+  const [activeTab, setActiveTab] = useState('Posts')
 
   useEffect(() => {
     if (!userId) return
@@ -22,7 +23,7 @@ export default function OtherProfilePage() {
         setP(p)
         setPosts(postsData.posts || [])
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoad(false))
   }, [userId])
 
@@ -34,23 +35,27 @@ export default function OtherProfilePage() {
     )
   }
 
+  const postsToShow = activeTab === 'Posts' ? posts : []
+
   return (
     <AppShell
       backHref="/home"
       rightSlot={
         <div className="text-xs text-breezy-muted font-medium">
-          {posts.length} posts
+          {postsToShow.length} posts
         </div>
       }
     >
-      <ProfileHeader profile={profile} isOwn={false} />
+      <ProfileHeader profile={profile} isOwn={false} activeTab={activeTab} onTabChange={setActiveTab} />
       <div>
-        {posts.map(p => <PostCard key={p._id} post={p} />)}
-        {posts.length === 0 && (
+        {postsToShow.map(p => <PostCard key={p._id} post={p} onUpdate={(updated) => {
+          setPosts(prev => prev.map(old => old._id === updated._id ? updated : old))
+        }} />)}
+        {postsToShow.length === 0 && (
           <div className="flex flex-col items-center py-16 px-8 gap-2">
-            <p className="text-xl font-bold text-breezy-dark">Aucun post</p>
+            <p className="text-xl font-bold text-breezy-dark">Aucun post pour l&apos;instant</p>
             <p className="text-breezy-muted text-sm text-center">
-              Cet utilisateur n'a pas encore publié.
+              Rien à afficher dans l&apos;onglet {activeTab}.
             </p>
           </div>
         )}

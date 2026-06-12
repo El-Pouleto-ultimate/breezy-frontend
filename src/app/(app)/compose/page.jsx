@@ -21,7 +21,11 @@ export default function ComposePage() {
   async function publish() {
     if (!text.trim() || over || loading) return
     setL(true)
-    try { await createPost({ content: text }); router.push('/home') }
+    try { 
+      await createPost({ content: text }); 
+      window.dispatchEvent(new Event('postCreated'));
+      router.push('/home') 
+    }
     finally { setL(false) }
   }
 

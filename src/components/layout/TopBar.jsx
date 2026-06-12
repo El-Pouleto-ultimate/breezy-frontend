@@ -10,7 +10,7 @@ function SettingsIcon() {
 export default function TopBar({ title, backHref, rightSlot }) {
   const { user } = useAuth()
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-breezy-border">
+    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-breezy-border md:hidden">
       <div className="flex items-center justify-between px-4 h-14">
         {/* Left: avatar or back */}
         <div className="w-10">

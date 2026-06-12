@@ -11,12 +11,12 @@ import { timeAgo } from '@/utils/formatDate'
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 
-export default function CommentThread({ post, isOpen, onClose }) {
-  const { user }                         = useAuth()
+export default function CommentThread({ post, isOpen, onClose, onCommentAdded }) {
+  const { user } = useAuth()
   const { comments, loading, addComment } = useComments(isOpen ? post?._id : null)
-  const [reply, setReply]                = useState('')
-  const [sending, setSending]            = useState(false)
-  const sheetRef                         = useRef(null)
+  const [reply, setReply] = useState('')
+  const [sending, setSending] = useState(false)
+  const sheetRef = useRef(null)
 
   // Trap body scroll when open
   useEffect(() => {
@@ -28,7 +28,11 @@ export default function CommentThread({ post, isOpen, onClose }) {
     e.preventDefault()
     if (!reply.trim() || sending) return
     setSending(true)
-    try { await addComment(reply); setReply('') }
+    try {
+      const c = await addComment(reply)
+      setReply('')
+      onCommentAdded?.(c)
+    }
     finally { setSending(false) }
   }
 
@@ -58,7 +62,7 @@ export default function CommentThread({ post, isOpen, onClose }) {
           <span className="font-bold text-breezy-dark">Réponses</span>
           <button onClick={onClose} className="text-breezy-muted hover:text-breezy-dark p-1 rounded-full hover:bg-breezy-hover">
             <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
-              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"/>
+              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z" />
             </svg>
           </button>
         </div>
