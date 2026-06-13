@@ -1,4 +1,4 @@
-// ─── Mock User Service ────────────────────────────────────────────────
+//Mock User Service 
 import { MOCK_USERS } from './data'
 import { delay } from './utils'
 
@@ -45,7 +45,7 @@ export async function getFollowing(id) {
 
 export async function getFollowers(id) {
   await delay(250)
-  return { users: Object.values(_users).filter(u => u._id !== id) } // Just return everyone else as a mock
+  return { users: Object.values(_users).filter(u => u._id !== id) } // Il n'y a pas de suivi mutuel dans les données simulées, donc on retourne tous les utilisateurs sauf l'utilisateur actuel
 }
 
 export async function searchUsers(q) {

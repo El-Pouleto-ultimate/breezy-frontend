@@ -4,7 +4,7 @@ import { delay } from './utils'
 
 export async function login({ email, password }) {
   await delay(400)
-  // Accepte n'importe quel email/mdp — c'est du mock !
+  // Accepte n'importe quel email/mdp 
   if (!email || !password) throw { response: { data: { message: 'Tous les champs sont requis.' } } }
   return { token: MOCK_TOKEN, user: { ...MOCK_USERS.me } }
 }

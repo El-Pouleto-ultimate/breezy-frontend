@@ -1,4 +1,4 @@
-// ─── Mock Post Service ────────────────────────────────────────────────
+//  Mock Post Service 
 import { MOCK_POSTS, MOCK_USERS } from './data'
 import { delay } from './utils'
 

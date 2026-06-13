@@ -1,4 +1,4 @@
-// ─── Mock Comment Service ────────────────────────────────────────────
+// Mock Comment Service 
 import { MOCK_COMMENTS, MOCK_USERS } from './data'
 import { delay } from './utils'
 

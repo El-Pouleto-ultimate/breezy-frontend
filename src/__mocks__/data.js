@@ -1,8 +1,8 @@
-// ─── Mock Data ────────────────────────────────────────────────────────
+// Mock Data 
 // Données fictives réalistes pour tester tout le frontend sans API.
 // Activer avec NEXT_PUBLIC_USE_MOCKS=true dans .env.local
 
-// ──── USERS ────────────────────────────────────────────────────────────
+//USERS 
 export const MOCK_USERS = {
   me: {
     _id: 'user_me',
@@ -10,7 +10,7 @@ export const MOCK_USERS = {
     username: 'Alex Mercer',
     email: 'alex@breezy.dev',
     avatar: '',
-    bio: 'Digital designer & developer. Building minimal interfaces and drinking too much espresso. Opinions are my own.',
+    bio: 'Concepteur et développeur web. Je crée des interfaces minimalistes. ',
     location: 'Paris, France',
     createdAt: '2022-04-01T00:00:00Z',
     followingCount: 2,
@@ -23,7 +23,7 @@ export const MOCK_USERS = {
     username: 'Sarah Chen',
     email: 'sarah@breezy.dev',
     avatar: '',
-    bio: 'Product designer @DesignCo. Lover of minimal UI and great typography.',
+    bio: 'Concepteur de produits chez DesignCo. Passionné par les interfaces utilisateur minimalistes et la belle typographie.',
     location: 'Lyon, France',
     createdAt: '2023-01-15T00:00:00Z',
     followingCount: 320,
@@ -36,8 +36,8 @@ export const MOCK_USERS = {
     username: 'Marcus Johnson',
     email: 'marcus@breezy.dev',
     avatar: '',
-    bio: 'Full-stack developer. Open source enthusiast. Coffee addict.',
-    location: 'Bordeaux, France',
+    bio: 'Développeur full-stack. Passionné d\'open source.',
+    location: 'Toulouse, France',
     createdAt: '2023-06-20T00:00:00Z',
     followingCount: 189,
     followersCount: 3200,
@@ -49,7 +49,7 @@ export const MOCK_USERS = {
     username: 'Elena Dubois',
     email: 'elena@breezy.dev',
     avatar: '',
-    bio: 'UX researcher. Passionate about accessibility and inclusive design.',
+    bio: 'Chercheur en expérience utilisateur. Passionné par l\'accessibilité et la conception inclusive. Développeur full-stack. Passionné d\'open source.',
     location: 'Marseille, France',
     createdAt: '2023-03-10T00:00:00Z',
     followingCount: 450,
@@ -62,8 +62,8 @@ export const MOCK_USERS = {
     username: 'Thomas Petit',
     email: 'thomas@breezy.dev',
     avatar: '',
-    bio: 'Frontend engineer. Vue.js & React enthusiast.',
-    location: 'Toulouse, France',
+    bio: 'Développeur front-end. Passionné de Vue.js et React.',
+    location: 'Nice, France',
     createdAt: '2024-01-05T00:00:00Z',
     followingCount: 210,
     followersCount: 1800,
@@ -71,12 +71,12 @@ export const MOCK_USERS = {
   },
 }
 
-// ──── POSTS ────────────────────────────────────────────────────────────
+// POSTS
 export const MOCK_POSTS = [
   {
     _id: 'post_1',
     author: MOCK_USERS.sarah,
-    content: 'Je viens de terminer la refonte de notre bibliothèque de composants. 47 composants, tous avec le mode sombre. La clé ? Commencer par les tokens, pas les composants. 🎨',
+    content: 'Je viens de terminer la refonte de notre bibliothèque de composants. 47 composants, tous avec le mode sombre. La clé ? Commencer par les tokens, pas les composants.',
     createdAt: new Date(Date.now() - 1800000).toISOString(),
     likesCount: 234,
     commentsCount: 18,
@@ -109,7 +109,7 @@ export const MOCK_POSTS = [
   {
     _id: 'post_4',
     author: MOCK_USERS.me,
-    content: "Je viens de publier la nouvelle mise à jour du design system. Focus total sur la réduction et la clarté. Moins de bordures, plus d'espace de respiration. ✨",
+    content: "Je viens de publier la nouvelle mise à jour du design system. Focus total sur la réduction et la clarté. Moins de bordures, plus d'espace de respiration.",
     createdAt: new Date(Date.now() - 28800000).toISOString(),
     likesCount: 148,
     commentsCount: 12,
@@ -120,7 +120,7 @@ export const MOCK_POSTS = [
   {
     _id: 'post_5',
     author: MOCK_USERS.thomas,
-    content: "Les CSS Container Queries changent la donne. Fini les media queries pour la responsivité au niveau des composants. L'avenir de la mise en page web est là et il est magnifique. 🚀",
+    content: "Les CSS Container Queries changent la donne. Fini les media queries pour la responsivité au niveau des composants. L'avenir de la mise en page web est là et il est magnifique.",
     createdAt: new Date(Date.now() - 43200000).toISOString(),
     likesCount: 312,
     commentsCount: 28,
@@ -142,7 +142,7 @@ export const MOCK_POSTS = [
   {
     _id: 'post_7',
     author: MOCK_USERS.marcus,
-    content: "Expérimentation de mises en page structurelles pour le nouveau tableau de bord. Je pense que nous avons enfin trouvé les bons points de rupture responsifs. Après 3 semaines d'itération, ça marche tout simplement. 📐",
+    content: "Expérimentation de mises en page structurelles pour le nouveau tableau de bord. Je pense que nous avons enfin trouvé les bons points de rupture responsifs. Après 3 semaines d'itération, ça marche tout simplement.",
     createdAt: new Date(Date.now() - 172800000).toISOString(),
     likesCount: 189,
     commentsCount: 15,
@@ -164,15 +164,15 @@ export const MOCK_POSTS = [
   },
 ]
 
-// ──── MY POSTS (for own profile) ───────────────────────────────────────
+// Filtrer les publications rédigées par l'utilisateur actuel
 export const MOCK_MY_POSTS = MOCK_POSTS.filter(p => p.author._id === 'user_me')
 
-// ──── COMMENTS ────────────────────────────────────────────────────────
+// Commentaires
 export const MOCK_COMMENTS = {
   post_1: [
     { _id: 'c1', author: MOCK_USERS.marcus, content: 'C\'est exactement ce dont j\'avais besoin ! J\'aimerais voir l\'architecture des tokens.', createdAt: new Date(Date.now() - 1200000).toISOString() },
     { _id: 'c2', author: MOCK_USERS.elena, content: "Commencer par les tokens est tellement sous-estimé. La plupart des équipes passent directement aux composants et le regrettent plus tard.", createdAt: new Date(Date.now() - 900000).toISOString() },
-    { _id: 'c3', author: MOCK_USERS.thomas, content: 'Mode sombre dès le premier jour ! 🌙 Choix intelligent.', createdAt: new Date(Date.now() - 600000).toISOString() },
+    { _id: 'c3', author: MOCK_USERS.thomas, content: 'Mode sombre dès le premier jour ! Choix intelligent.', createdAt: new Date(Date.now() - 600000).toISOString() },
   ],
   post_2: [
     { _id: 'c4', author: MOCK_USERS.sarah, content: "100% d'accord. La gouvernance est la partie la plus difficile et la plupart des équipes l'ignorent.", createdAt: new Date(Date.now() - 5400000).toISOString() },
@@ -184,13 +184,13 @@ export const MOCK_COMMENTS = {
   ],
 }
 
-// ──── NOTIFICATIONS ────────────────────────────────────────────────────
+//  NOTIFICATIONS 
 export const MOCK_NOTIFICATIONS = [
   {
     _id: 'n1', type: 'like', read: false, postId: 'post_4',
     createdAt: new Date(Date.now() - 3600000).toISOString(),
     actors: [{ _id: 'user_sarah', username: 'Sarah Chen', avatar: '' }],
-    preview: 'Just pushed the new design system update. Focusing entirely on reduction and clarity...',
+    preview: 'Je viens de publier la nouvelle mise à jour du système de design. L\'accent a été mis uniquement sur la simplicité et la clarté...',
   },
   {
     _id: 'n2', type: 'follow', read: false,
@@ -226,7 +226,7 @@ export const MOCK_NOTIFICATIONS = [
   },
 ]
 
-// ──── CONVERSATIONS (messages) ─────────────────────────────────────────
+// Conversations
 export const MOCK_CONVERSATIONS = [
   {
     id: '1', user: MOCK_USERS.sarah,

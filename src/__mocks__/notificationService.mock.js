@@ -1,4 +1,4 @@
-// ─── Mock Notification Service ───────────────────────────────────────
+// Mock Notification Service 
 import { MOCK_NOTIFICATIONS } from './data'
 import { delay } from './utils'
 

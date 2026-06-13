@@ -1,4 +1,4 @@
-// ─── Helper: détecte si le mode mock est actif ────────────────────────
+// Helper: détecte si le mode mock est actif 
 export const isMockEnabled = () =>
   typeof window !== 'undefined' &&
   process.env.NEXT_PUBLIC_USE_MOCKS === 'true'
