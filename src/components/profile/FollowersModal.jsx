@@ -52,7 +52,7 @@ export default function FollowersModal({ isOpen, onClose, userId, type }) {
                       <span className="text-breezy-muted text-xs">@{u.username}</span>
                     </div>
                   </div>
-                  {/* Ideally a Follow/Unfollow button here, but for now we just show the users */}
+                  {/* Idéal : Bouton Suivre/Ne plus suivre */}
                 </div>
               ))}
             </div>

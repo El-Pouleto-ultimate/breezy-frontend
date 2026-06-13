@@ -80,7 +80,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
         </div>
       </form>
 
-      {/* Dropdown for recent searches */}
+      {/* Pour les recherches récentes */}
       {focused && recent.length > 0 && !q && (
         <div className="absolute top-full left-0 right-0 mt-1 mx-4 bg-white rounded-xl shadow-lg border border-breezy-border overflow-hidden z-50">
           <div className="flex justify-between items-center px-4 py-3 border-b border-breezy-border">

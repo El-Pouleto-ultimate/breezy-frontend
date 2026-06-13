@@ -1,7 +1,5 @@
 'use client'
-// CommentThread.jsx
-// Slide-up sheet showing original post + comments + reply composer (Fx7, Fx8)
-// Used inside PostCard when tapping the comment icon.
+
 
 import { useEffect, useRef } from 'react'
 import { useComments } from '@/hooks/useComments'
@@ -18,7 +16,7 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded })
   const [sending, setSending] = useState(false)
   const sheetRef = useRef(null)
 
-  // Trap body scroll when open
+  // Fermer le thread si l'utilisateur clique en dehors du sheet
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }

@@ -32,7 +32,7 @@ export default function PostForm({ onPostCreated }) {
     if ((!text.trim() && !mediaPreview) || over || loading) return
     setL(true)
     try { 
-      // Call createPost or parent function
+      // Appel à la fonction onPostCreated si elle est fournie
       if(onPostCreated) {
         await onPostCreated(text, mediaPreview)
       }
