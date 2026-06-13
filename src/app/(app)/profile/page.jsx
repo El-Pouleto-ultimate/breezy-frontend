@@ -8,8 +8,8 @@ import ComposeFab from '@/components/feed/ComposeFab'
 import { useAuth } from '@/hooks/useAuth'
 
 const MOCK_POSTS = [
-  { _id: 'p1', author: { _id: 'me', username: 'Alex Mercer', avatar: '' }, content: 'Just pushed the new design system update. Focusing entirely on reduction and clarity. Less borders, more breathing room.', createdAt: new Date(Date.now() - 7200000).toISOString(), likesCount: 148, commentsCount: 12, repostsCount: 4, viewsCount: 1200 },
-  { _id: 'p2', author: { _id: 'me', username: 'Alex Mercer', avatar: '' }, content: 'Experimenting with structural layouts for the new dashboard. I think we finally nailed the responsive breakpoints.', createdAt: new Date(Date.now() - 604800000).toISOString(), likesCount: 392, commentsCount: 45, repostsCount: 12, viewsCount: 5000, imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80' },
+  { _id: 'p1', author: { _id: 'me', username: 'Alex Mercer', avatar: '' }, content: 'Je viens de publier la nouvelle mise à jour du système de design. L\'accent a été mis uniquement sur la simplicité et la clarté. Moins de bordures, plus d\'espace.', createdAt: new Date(Date.now() - 7200000).toISOString(), likesCount: 148, commentsCount: 12, repostsCount: 4, viewsCount: 1200 },
+  { _id: 'p2', author: { _id: 'me', username: 'Alex Mercer', avatar: '' }, content: 'Je teste différentes dispositions structurelles pour le nouveau tableau de bord. Je crois qu\'on a enfin trouvé le bon équilibre pour les points de rupture adaptatifs.', createdAt: new Date(Date.now() - 604800000).toISOString(), likesCount: 392, commentsCount: 45, repostsCount: 12, viewsCount: 5000, imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80' },
 ]
 
 export default function ProfilePage() {
@@ -18,7 +18,7 @@ export default function ProfilePage() {
 
   const mockProfile = {
     id: user?.id, username: user?.username || 'Alex Mercer',
-    avatar: user?.avatar, bio: user?.bio || 'Digital designer & developer. Building minimal interfaces and drinking too much espresso. Opinions are my own.',
+    avatar: user?.avatar, bio: user?.bio || 'DDesigner et développeur digital. Création d\'interfaces minimalistes et consommation excessive de café. Les opinions sont les miennes.',
     location: user?.location || 'Paris, France', createdAt: '2022-04-01T00:00:00Z',
     followingCount: 842, followersCount: 12500, followedByMe: false,
     banner: user?.banner || 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1000&q=80',
