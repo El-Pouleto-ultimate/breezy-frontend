@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 
@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5173
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
 
-CMD ["npm", "run", "dev", "--", "--host"]
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
