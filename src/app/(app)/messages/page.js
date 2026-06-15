@@ -6,11 +6,11 @@ import Avatar from '@/components/ui/Avatar'
 import { timeAgo } from '@/utils/formatDate'
 
 const MOCK_CONVS = [
-  { id: '1', user: { username: 'Alex Rivera', avatar: '' }, lastMsg: 'Are we still on for the design re...', time: new Date(Date.now() - 120000).toISOString(), unread: true },
-  { id: '2', user: { username: 'Sarah Chen', avatar: '' }, lastMsg: "Sounds good, I'll send over the Fig...", time: new Date(Date.now() - 3600000).toISOString(), unread: false },
-  { id: '3', user: { username: 'Marcus Johnson', avatar: '' }, lastMsg: 'Can you review the latest compon...', time: new Date(Date.now() - 86400000).toISOString(), unread: false },
-  { id: '4', user: { username: 'Design System Guild', avatar: '' }, lastMsg: "Elena: Let's merge the typography...", time: new Date(Date.now() - 172800000).toISOString(), unread: false },
-  { id: '5', user: { username: 'David Kim', avatar: '' }, lastMsg: 'Haha yeah, that sounds exactly rig...', time: new Date(Date.now() - 604800000).toISOString(), unread: false },
+  { id: '1', user: { username: 'Alex Rivera', avatar: '' }, lastMsg: 'Sommes-nous toujours d\'accord pour la refonte du design...', time: new Date(Date.now() - 120000).toISOString(), unread: true },
+  { id: '2', user: { username: 'Sarah Chen', avatar: '' }, lastMsg: "Ça me va, je t'envoie la Fig...", time: new Date(Date.now() - 3600000).toISOString(), unread: false },
+  { id: '3', user: { username: 'Marcus Johnson', avatar: '' }, lastMsg: 'Pouvez-vous examiner le dernier composant...', time: new Date(Date.now() - 86400000).toISOString(), unread: false },
+  { id: '4', user: { username: 'Design System Guild', avatar: '' }, lastMsg: "Elena : Fusionnons la typographie...", time: new Date(Date.now() - 172800000).toISOString(), unread: false },
+  { id: '5', user: { username: 'David Kim', avatar: '' }, lastMsg: 'Haha ouais, ça semble tout à fait correct...', time: new Date(Date.now() - 604800000).toISOString(), unread: false },
 ]
 
 export default function MessagesPage() {

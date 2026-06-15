@@ -6,9 +6,9 @@ import Avatar from '@/components/ui/Avatar'
 import { MOCK_CONVERSATIONS, MOCK_USERS } from '@/__mocks__/data'
 
 const MOCK_MESSAGES = [
-  { id: 'm1', senderId: '1', text: 'Hey, are we still on for the design review?', time: new Date(Date.now() - 180000).toISOString() },
-  { id: 'm2', senderId: 'me', text: 'Yes! Just finishing up some components.', time: new Date(Date.now() - 120000).toISOString() },
-  { id: 'm3', senderId: '1', text: 'Awesome, can\'t wait to see them.', time: new Date(Date.now() - 60000).toISOString() },
+  { id: 'm1', senderId: '1', text: 'Salut, on est toujours d\'accord pour la revue de conception ?', time: new Date(Date.now() - 180000).toISOString() },
+  { id: 'm2', senderId: 'me', text: 'Oui ! Je termine juste quelques composants.', time: new Date(Date.now() - 120000).toISOString() },
+  { id: 'm3', senderId: '1', text: 'Génial, j\'ai hâte de les voir.', time: new Date(Date.now() - 60000).toISOString() },
 ]
 
 export default function ChatPage() {
