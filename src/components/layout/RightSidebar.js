@@ -26,7 +26,7 @@ export default function RightSidebar() {
                 <p className="text-xs text-breezy-muted mt-0.5">{t.count}</p>
               </div>
               <button className="text-breezy-muted p-1 hover:text-breezy-primary rounded-full hover:bg-blue-50 transition-colors">
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" /></svg>
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2" /></svg>
               </button>
             </div>
           ))}
@@ -36,12 +36,13 @@ export default function RightSidebar() {
         </div>
       </div>
 
+      {/* Liens légaux corrigés : Plus de target="_blank" et que des balises <Link> propres */}
       <div className="text-[13px] text-breezy-muted flex flex-wrap gap-x-3 gap-y-1 mt-4 px-4 leading-relaxed">
-        <Link href="/legal/terms" className="hover:underline">Conditions d'utilisation</Link>
+        <Link href="/legal/terms" className="hover:underline">Conditions d&apos;utilisation</Link>
         <Link href="/legal/privacy" className="hover:underline">Politique de confidentialité</Link>
-        <Link href="/legal/privacy" className="hover:underline">Politique relative aux cookies</Link>
-        <a href="#" className="hover:underline">Accessibilité</a>
-        <a href="#" className="hover:underline">Informations sur les annonces</a>
+        <Link href="/legal/cookies" className="hover:underline">Politique relative aux cookies</Link>
+        <Link href="/legal/accessibility" className="hover:underline">Accessibilité</Link>
+        <Link href="/legal/ads" className="hover:underline">Informations sur les annonces</Link>
         <span>© 2026 Breezy Corp.</span>
       </div>
     </aside>

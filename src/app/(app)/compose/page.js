@@ -6,7 +6,7 @@ import { createPost } from '@/services/postService'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 
-const MAX = 280
+const MAX = 280 // limite le nombre de caractères
 
 export default function ComposePage() {
   const { user }    = useAuth()

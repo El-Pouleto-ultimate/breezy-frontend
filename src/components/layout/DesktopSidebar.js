@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
@@ -46,7 +46,13 @@ const LINKS = [
 
 export default function DesktopSidebar() {
   const path = usePathname()
+  const router = useRouter()
   const { user, unreadCount, unreadMsgCount, logout } = useAuth()
+
+  function handleLogout() {
+    logout()
+    router.push('/connect')
+  }
   
   return (
     <header className="hidden md:flex w-[88px] lg:w-[275px] flex-col justify-between h-screen sticky top-0 px-2 lg:px-4 py-4 shrink-0 overflow-y-auto">
@@ -85,7 +91,7 @@ export default function DesktopSidebar() {
       {/* User profile / Logout */}
       {user && (
         <div className="mt-auto w-full flex justify-center lg:block mb-4 relative group">
-           <button onClick={() => { if(window.confirm('Voulez-vous vous déconnecter ?')) logout() }} className="flex items-center w-full p-3 rounded-full hover:bg-breezy-hover transition-colors text-left cursor-pointer">
+           <button onClick={() => { if(window.confirm('Voulez-vous vous déconnecter ?')) handleLogout() }} className="flex items-center w-full p-3 rounded-full hover:bg-breezy-hover transition-colors text-left cursor-pointer">
              <Avatar src={user.avatar} username={user.username} size="sm" />
              <div className="hidden lg:block ml-3 overflow-hidden flex-1">
                <p className="font-bold text-[15px] truncate text-breezy-dark">{user.username}</p>
@@ -96,7 +102,7 @@ export default function DesktopSidebar() {
              </div>
            </button>
            <div className="absolute bottom-full left-0 mb-2 w-full lg:w-64 bg-white shadow-xl border border-breezy-border rounded-2xl p-2 hidden group-hover:block z-50">
-             <button onClick={logout} className="w-full text-left px-4 py-3 font-bold hover:bg-breezy-hover rounded-xl text-breezy-dark">
+             <button onClick={handleLogout} className="w-full text-left px-4 py-3 font-bold hover:bg-breezy-hover rounded-xl text-breezy-dark">
                Se déconnecter de @{user.username}
              </button>
            </div>
