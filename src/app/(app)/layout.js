@@ -9,14 +9,10 @@ export default function AppLayout({ children }) {
   const router = useRouter()
   const [isReady, setIsReady] = useState(false)
 
-  // On attend que l'authentification ait fait son premier check
   useEffect(() => {
-    if (!loading) {
-      setIsReady(true)
-    }
+    if (!loading) setIsReady(true)
   }, [loading])
 
-  // Redirection sécurisée
   useEffect(() => {
     if (isReady && !loading && !token) {
       router.replace('/connect')
