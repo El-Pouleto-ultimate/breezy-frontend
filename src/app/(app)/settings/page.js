@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AppShell from '@/components/layout/AppShell'
 import { useAuth } from '@/hooks/useAuth'
+import api from '@/services/api'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -11,21 +12,45 @@ export default function SettingsPage() {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  if (!user) {
+    return null 
+  }
 
   function handleLogout() {
     logout()
-    router.push('/signin')
+    router.push('/connect')
   }
 
-  function handleChangePassword(e) {
+  async function handleChangePassword(e) {
     e.preventDefault()
-    setMessage('Mot de passe mis à jour avec succès.')
-    setTimeout(() => {
-      setActiveSection(null)
-      setMessage('')
-      setOldPassword('')
-      setNewPassword('')
-    }, 2000)
+    setError('')
+    setMessage('')
+    if (!oldPassword.trim() || !newPassword.trim()) {
+      setError('Tous les champs sont requis.')
+      return
+    }
+    if (newPassword.length < 6) {
+      setError('Le nouveau mot de passe doit faire au moins 6 caractères.')
+      return
+    }
+    setLoading(true)
+    try {
+      await api.put('/auth/change-password', {
+        oldPassword,
+        newPassword,
+      })
+      setMessage('Mot de passe mis à jour avec succès. Vous allez être déconnecté...')
+      setTimeout(() => {
+        handleLogout()
+      }, 2000)
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Erreur lors du changement de mot de passe.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -67,7 +92,7 @@ export default function SettingsPage() {
               <h3 className="font-bold mb-4">Informations du compte</h3>
               <div className="flex flex-col gap-3">
                 <div>
-                  <label className="text-xs text-breezy-muted">Nom d'utilisateur</label>
+                  <label className="text-xs text-breezy-muted">Nom d&apos;utilisateur</label>
                   <p className="text-sm font-medium">@{user?.username}</p>
                 </div>
                 <div>
@@ -78,13 +103,16 @@ export default function SettingsPage() {
             </div>
           ) : activeSection === 'password' ? (
             <div className="p-4">
-              <button onClick={() => setActiveSection(null)} className="text-breezy-primary text-sm mb-4 hover:underline">&larr; Retour</button>
+              <button onClick={() => { setActiveSection(null); setError(''); setMessage(''); setOldPassword(''); setNewPassword('') }} className="text-breezy-primary text-sm mb-4 hover:underline">&larr; Retour</button>
               <h3 className="font-bold mb-4">Changer de mot de passe</h3>
               <form onSubmit={handleChangePassword} className="flex flex-col gap-3">
-                <input type="password" placeholder="Mot de passe actuel" value={oldPassword} onChange={e => setOldPassword(e.target.value)} required className="border rounded-lg px-3 py-2 text-sm" />
-                <input type="password" placeholder="Nouveau mot de passe" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="border rounded-lg px-3 py-2 text-sm" />
-                {message && <p className="text-sm text-green-600">{message}</p>}
-                <button type="submit" className="bg-breezy-primary text-white rounded-full py-2 text-sm font-bold mt-2">Enregistrer</button>
+                <input type="password" placeholder="Mot de passe actuel" value={oldPassword} onChange={e => setOldPassword(e.target.value)} required className="border rounded-lg px-3 py-2 text-sm" disabled={loading} />
+                <input type="password" placeholder="Nouveau mot de passe" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="border rounded-lg px-3 py-2 text-sm" disabled={loading} />
+                {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-2.5">{error}</p>}
+                {message && <p className="text-sm text-green-600 bg-green-50 rounded-xl px-4 py-2.5">{message}</p>}
+                <button type="submit" disabled={loading} className="bg-breezy-primary text-white rounded-full py-2 text-sm font-bold mt-2 disabled:opacity-50">
+                  {loading ? 'Enregistrement...' : 'Enregistrer'}
+                </button>
               </form>
             </div>
           ) : null}
