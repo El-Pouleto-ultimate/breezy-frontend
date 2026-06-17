@@ -6,7 +6,14 @@ import ProfileHeader from '@/components/profile/ProfileHeader'
 import PostCard from '@/components/feed/PostCard'
 import Spinner from '@/components/ui/Spinner'
 import { getUserById } from '@/services/userService'
-import { getUserPosts } from '@/services/postService'
+import { getUserPosts, getUserReplies, getUserMedia, getUserLikes } from '@/services/postService'
+
+const TAB_FETCHERS = {
+  Posts: getUserPosts,
+  Replies: getUserReplies,
+  Media: getUserMedia,
+  Likes: getUserLikes,
+}
 
 export default function OtherProfilePage() {
   const { userId } = useParams()
@@ -18,14 +25,16 @@ export default function OtherProfilePage() {
   useEffect(() => {
     if (!userId) return
     setLoad(true)
-    Promise.all([getUserById(userId), getUserPosts(userId)])
+    const fetchPosts = TAB_FETCHERS[activeTab] || getUserPosts
+
+    Promise.all([getUserById(userId), fetchPosts(userId)])
       .then(([p, postsData]) => {
         setP(p)
         setPosts(postsData.posts || [])
       })
       .catch(() => { })
       .finally(() => setLoad(false))
-  }, [userId])
+  }, [userId, activeTab])
 
   if (loading) {
     return (
@@ -35,23 +44,21 @@ export default function OtherProfilePage() {
     )
   }
 
-  const postsToShow = activeTab === 'Posts' ? posts : []
-
   return (
     <AppShell
       backHref="/home"
       rightSlot={
         <div className="text-xs text-breezy-muted font-medium">
-          {postsToShow.length} posts
+          {posts.length} posts
         </div>
       }
     >
       <ProfileHeader profile={profile} isOwn={false} activeTab={activeTab} onTabChange={setActiveTab} />
       <div>
-        {postsToShow.map(p => <PostCard key={p._id} post={p} onUpdate={(updated) => {
+        {posts.map(p => <PostCard key={p._id} post={p} onUpdate={(updated) => {
           setPosts(prev => prev.map(old => old._id === updated._id ? updated : old))
         }} />)}
-        {postsToShow.length === 0 && (
+        {posts.length === 0 && (
           <div className="flex flex-col items-center py-16 px-8 gap-2">
             <p className="text-xl font-bold text-breezy-dark">Aucun post pour l&apos;instant</p>
             <p className="text-breezy-muted text-sm text-center">
