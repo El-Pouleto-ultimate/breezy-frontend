@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useLike } from '@/hooks/useLike'
+import { toggleRepost } from '@/services/postService'
 
 function Ico({ d, cls = 'w-5 h-5' }) { return <svg viewBox="0 0 24 24" className={cls}><path d={d} /></svg> }
 
@@ -22,12 +23,22 @@ export default function PostActions({ post, onComment, onUpdate }) {
   // Calcule un nombre de vues réaliste si non fourni
   const views = post?.viewsCount || (post?.likesCount * 12 + 45) || 150
 
-  function handleRepost() {
-    const nextReposted = !reposted
-    const nextCount = nextReposted ? repostsCount + 1 : Math.max(0, repostsCount - 1)
+  async function handleRepost() {
+    const was = reposted
+    const prevCount = repostsCount
+    const nextReposted = !was
+    const nextCount = nextReposted ? prevCount + 1 : Math.max(0, prevCount - 1)
     setReposted(nextReposted)
     setRepostsCount(nextCount)
-    onUpdate?.({ ...post, repostedByMe: nextReposted, repostsCount: nextCount })
+    try {
+      const d = await toggleRepost(post._id)
+      setReposted(d.reposted)
+      setRepostsCount(d.repostsCount)
+      onUpdate?.({ ...post, repostedByMe: d.reposted, repostsCount: d.repostsCount })
+    } catch {
+      setReposted(was)
+      setRepostsCount(prevCount)
+    }
   }
 
   function downloadTxt() {

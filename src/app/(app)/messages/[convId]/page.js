@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 
-import { MOCK_CONVERSATIONS, MOCK_USERS } from '@/__mocks__/data'
+import { MOCK_CONVERSATIONS, MOCK_USERS } from '@/mocks/data'
 
 const MOCK_MESSAGES = [
   { id: 'm1', senderId: '1', text: 'Salut, on est toujours d\'accord pour la revue de conception ?', time: new Date(Date.now() - 180000).toISOString() },
@@ -36,7 +36,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen md:h-full bg-white max-w-2xl w-full mx-auto border-x border-breezy-border relative">
+    <div className="flex flex-col h-[100dvh] md:h-full bg-white max-w-2xl w-full mx-auto border-x border-breezy-border relative">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-md flex items-center gap-4 px-4 h-14 border-b border-breezy-border">
         <button onClick={() => router.back()} className="text-breezy-dark p-2 -ml-2 rounded-full hover:bg-breezy-hover">
@@ -51,7 +51,7 @@ export default function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-20">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-24">
         <Link href={`/profile/${partnerId}`} className="flex flex-col items-center py-6 border-b border-breezy-border mb-4 hover:opacity-80 transition-opacity">
           <Avatar src={partner.avatar} username={partner.username} size="xl" />
           <span className="font-bold text-lg mt-2">{partner.username}</span>

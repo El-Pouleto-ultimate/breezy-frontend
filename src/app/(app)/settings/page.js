@@ -1,122 +1,129 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth' // Vérifie bien si c'est @/hooks/useAuth ou @/context/AuthContext selon ton projet
 import AppShell from '@/components/layout/AppShell'
-import { useAuth } from '@/hooks/useAuth'
-import api from '@/services/api'
+
+import { changePassword } from '@/services/authService'
 
 export default function SettingsPage() {
+  const { logout, user } = useAuth() // On récupère logout et l'utilisateur actuel
   const router = useRouter()
-  const { logout, user } = useAuth()
-  const [activeSection, setActiveSection] = useState(null)
+  
+  // États pour le formulaire de mot de passe
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
-  const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
-  if (!user) {
-    return null 
-  }
-
-  function handleLogout() {
-    logout()
-    router.push('/connect')
-  }
-
-  async function handleChangePassword(e) {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setMessage('')
-    if (!oldPassword.trim() || !newPassword.trim()) {
-      setError('Tous les champs sont requis.')
-      return
-    }
-    if (newPassword.length < 6) {
-      setError('Le nouveau mot de passe doit faire au moins 6 caractères.')
-      return
-    }
     setLoading(true)
+
     try {
-      await api.put('/auth/change-password', {
-        oldPassword,
-        newPassword,
-      })
-      setMessage('Mot de passe mis à jour avec succès. Vous allez être déconnecté...')
+      await changePassword({ oldPassword, newPassword })
+
+      setSuccess(true)
+      
+      // 🔒 Déconnexion de sécurité automatique après 2 secondes
       setTimeout(() => {
-        handleLogout()
+        logout() // Vide le token et l'utilisateur global
+        router.replace('/signin') // Redirection vers la page de connexion
       }, 2000)
+
     } catch (err) {
-      setError(err?.response?.data?.message || 'Erreur lors du changement de mot de passe.')
+      setError(err.message || 'Une erreur est survenue.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <AppShell title="Paramètres">
-      <div className="flex flex-col h-full bg-breezy-bg min-h-screen">
-        <div className="bg-white border-b border-breezy-border px-4 py-6">
-          <h2 className="text-xl font-bold text-breezy-dark mb-1">Compte</h2>
-          <p className="text-sm text-breezy-muted">Gérer les informations de votre compte.</p>
+    <AppShell backHref="/home">
+      <div className="p-6 max-w-xl mx-auto space-y-8">
+        
+        {/* En-tête des paramètres */}
+        <div>
+          <h1 className="text-2xl font-bold text-breezy-dark">Paramètres</h1>
+          <p className="text-sm text-breezy-muted">Gère les informations de ton compte @{user?.username}</p>
         </div>
 
-        <div className="bg-white border-b border-breezy-border mt-2">
-          {activeSection === null ? (
-            <>
-              <div onClick={() => setActiveSection('info')} className="px-4 py-4 border-b border-breezy-border hover:bg-breezy-hover cursor-pointer transition-colors">
-                <span className="font-medium text-breezy-dark text-sm">Informations du compte</span>
-                <p className="text-xs text-breezy-muted mt-0.5">Voir les informations de votre compte comme votre adresse email.</p>
-              </div>
-              <div onClick={() => setActiveSection('password')} className="px-4 py-4 border-b border-breezy-border hover:bg-breezy-hover cursor-pointer transition-colors">
-                <span className="font-medium text-breezy-dark text-sm">Changer de mot de passe</span>
-                <p className="text-xs text-breezy-muted mt-0.5">Modifiez votre mot de passe actuel.</p>
-              </div>
-              <div
-                onClick={handleLogout}
-                className="px-4 py-4 hover:bg-red-50 cursor-pointer transition-colors flex items-center justify-between group"
-              >
-                <div>
-                  <span className="font-bold text-red-600 text-sm">Déconnexion</span>
-                  <p className="text-xs text-red-400 mt-0.5">Vous serez déconnecté de @{user?.username || 'utilisateur'}</p>
-                </div>
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <path d="M16 13v-2H7V8l-5 4 5 4v-3z"></path>
-                  <path d="M20 3h-9c-1.103 0-2 .897-2 2v4h2V5h9v14h-9v-4H9v4c0 1.103.897 2 2 2h9c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2z"></path>
-                </svg>
-              </div>
-            </>
-          ) : activeSection === 'info' ? (
-            <div className="p-4">
-              <button onClick={() => setActiveSection(null)} className="text-breezy-primary text-sm mb-4 hover:underline">&larr; Retour</button>
-              <h3 className="font-bold mb-4">Informations du compte</h3>
-              <div className="flex flex-col gap-3">
-                <div>
-                  <label className="text-xs text-breezy-muted">Nom d&apos;utilisateur</label>
-                  <p className="text-sm font-medium">@{user?.username}</p>
-                </div>
-                <div>
-                  <label className="text-xs text-breezy-muted">Email</label>
-                  <p className="text-sm font-medium">{user?.email}</p>
-                </div>
-              </div>
+        <hr className="border-gray-100" />
+
+        {/* Section Sécurité / Mot de passe */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+          <h2 className="text-lg font-bold text-breezy-dark">Sécurité du compte</h2>
+          <p className="text-xs text-breezy-muted">Modifie ton mot de passe pour sécuriser ton accès.</p>
+
+          {success ? (
+            <div className="bg-green-50 text-green-600 p-4 rounded-xl border border-green-200 text-sm font-medium animate-pulse">
+              ✨ Mot de passe modifié avec succès ! Déconnexion de sécurité en cours...
             </div>
-          ) : activeSection === 'password' ? (
-            <div className="p-4">
-              <button onClick={() => { setActiveSection(null); setError(''); setMessage(''); setOldPassword(''); setNewPassword('') }} className="text-breezy-primary text-sm mb-4 hover:underline">&larr; Retour</button>
-              <h3 className="font-bold mb-4">Changer de mot de passe</h3>
-              <form onSubmit={handleChangePassword} className="flex flex-col gap-3">
-                <input type="password" placeholder="Mot de passe actuel" value={oldPassword} onChange={e => setOldPassword(e.target.value)} required className="border rounded-lg px-3 py-2 text-sm" disabled={loading} />
-                <input type="password" placeholder="Nouveau mot de passe" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="border rounded-lg px-3 py-2 text-sm" disabled={loading} />
-                {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-2.5">{error}</p>}
-                {message && <p className="text-sm text-green-600 bg-green-50 rounded-xl px-4 py-2.5">{message}</p>}
-                <button type="submit" disabled={loading} className="bg-breezy-primary text-white rounded-full py-2 text-sm font-bold mt-2 disabled:opacity-50">
-                  {loading ? 'Enregistrement...' : 'Enregistrer'}
+          ) : (
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              {error && (
+                <div className="text-red-500 text-sm bg-red-50 p-3 rounded-xl border border-red-100">
+                  {error}
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-xs font-semibold text-breezy-muted mb-2 uppercase tracking-wider">
+                  Ancien mot de passe
+                </label>
+                <input 
+                  type="password" 
+                  required
+                  value={oldPassword} 
+                  onChange={e => setOldPassword(e.target.value)}
+                  className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-breezy-primary focus:bg-white transition-all text-sm"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-breezy-muted mb-2 uppercase tracking-wider">
+                  Nouveau mot de passe
+                </label>
+                <input 
+                  type="password" 
+                  required
+                  value={newPassword} 
+                  onChange={e => setNewPassword(e.target.value)}
+                  className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-breezy-primary focus:bg-white transition-all text-sm"
+                  placeholder="Minimum 6 caractères"
+                />
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="px-6 py-2.5 bg-breezy-dark text-white font-medium rounded-full hover:opacity-95 disabled:opacity-50 transition-all text-sm"
+                >
+                  {loading ? 'Mise à jour...' : 'Enregistrer le mot de passe'}
                 </button>
-              </form>
-            </div>
-          ) : null}
+              </div>
+            </form>
+          )}
         </div>
+
+        {/* Optionnel : Bouton de déconnexion directe en bas de page */}
+        <hr className="border-gray-100" />
+        <div className="flex justify-start">
+          <button 
+            onClick={() => {
+              logout()
+              router.replace('/signin')
+            }}
+            className="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors"
+          >
+            Se déconnecter de Breezy
+          </button>
+        </div>
+
       </div>
     </AppShell>
   )

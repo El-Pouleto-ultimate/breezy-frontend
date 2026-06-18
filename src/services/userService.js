@@ -1,5 +1,5 @@
-import { isMockEnabled } from '@/__mocks__/utils'
-import * as mock from '@/__mocks__/userService.mock'
+import { isMockEnabled } from '@/mocks/utils'
+import * as mock from '@/mocks/userService.mock'
 import api from './api'
 
 const real = {

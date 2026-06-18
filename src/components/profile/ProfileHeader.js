@@ -15,6 +15,11 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
   const { user } = useAuth()
   const { following, toggle, loading } = useFollow(profile?.id, profile?.followedByMe)
 
+  const handleToggleFollow = async () => {
+    await toggle()
+    if (onProfileUpdate) onProfileUpdate()
+  }
+
   const [modalOpen, setModalOpen] = useState(false)
   const [modalType, setModalType] = useState('followers')
 
@@ -46,7 +51,7 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
               </Link>
               : <Button
                 variant={following ? 'unfollow' : 'follow'}
-                onClick={toggle}
+                onClick={handleToggleFollow}
                 loading={loading}
               >
                 {following ? 'Ne plus suivre' : 'Suivre'}

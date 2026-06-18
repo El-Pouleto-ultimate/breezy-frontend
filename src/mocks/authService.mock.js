@@ -26,3 +26,10 @@ export async function getMe() {
   await delay(200)
   return { ...MOCK_USERS.me }
 }
+
+export async function changePassword({ oldPassword, newPassword }) {
+  await delay(400)
+  if (!oldPassword || !newPassword) throw new Error('Ancien mot de passe et nouveau mot de passe requis.')
+  if (oldPassword !== 'password') throw new Error('Ancien mot de passe incorrect.')
+  return { success: true }
+}

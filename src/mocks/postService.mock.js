@@ -1,8 +1,26 @@
 import { MOCK_POSTS, MOCK_USERS, MOCK_COMMENTS } from './data'
 import { delay } from './utils'
 
-// État local mutable pour simuler les interactions
-let _posts = [...MOCK_POSTS]
+const STORAGE_KEY = 'breezy_mock_posts'
+
+function loadPosts() {
+  if (typeof window === 'undefined') return [...MOCK_POSTS]
+  try {
+    const saved = sessionStorage.getItem(STORAGE_KEY)
+    return saved ? JSON.parse(saved) : [...MOCK_POSTS]
+  } catch {
+    return [...MOCK_POSTS]
+  }
+}
+
+function savePosts() {
+  if (typeof window === 'undefined') return
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(_posts))
+  } catch {}
+}
+
+let _posts = loadPosts()
 let _nextId = 100
 
 export async function getFeed(page = 1) {
@@ -20,18 +38,11 @@ export async function getFeed(page = 1) {
 export async function getUserPosts(uid, page = 1) {
   await delay(300)
   const userPosts = _posts.filter(p => p.author?._id === uid)
-  return {
-    posts: userPosts,
-    totalPages: 1,
-    page,
-  }
+  return { posts: userPosts, totalPages: 1, page }
 }
 
 export async function getUserReplies(uid, page = 1) {
   await delay(300)
-  // Les réponses sont stockées dans MOCK_COMMENTS, indexées par postId,
-  // pas par auteur. On reconstruit les réponses de l'utilisateur en
-  // parcourant tous les commentaires de tous les posts.
   const replies = []
   for (const [postId, comments] of Object.entries(MOCK_COMMENTS)) {
     const parentPost = _posts.find(p => p._id === postId)
@@ -63,16 +74,20 @@ export async function getUserMedia(uid, page = 1) {
 
 export async function getUserLikes(uid, page = 1) {
   await delay(300)
-  // Limitation du mock : likedByMe représente les likes de l'utilisateur
-  // courant ("me"), pas ceux de l'utilisateur uid visité. Pour un profil
-  // autre que "me", on ne peut pas distinguer ses likes dans ce jeu de
-  // données. On retourne donc les posts likés par l'utilisateur courant
-  // uniquement quand uid correspond à "me".
   if (uid !== MOCK_USERS.me._id) {
     return { posts: [], totalPages: 1, page }
   }
   const liked = _posts.filter(p => p.likedByMe)
   return { posts: liked, totalPages: 1, page }
+}
+
+export async function getUserReposts(uid, page = 1) {
+  await delay(300)
+  if (uid !== MOCK_USERS.me._id) {
+    return { posts: [], totalPages: 1, page }
+  }
+  const reposted = _posts.filter(p => p.repostedByMe)
+  return { posts: reposted, totalPages: 1, page }
 }
 
 export async function createPost({ content, media }) {
@@ -88,14 +103,17 @@ export async function createPost({ content, media }) {
     repostsCount: 0,
     viewsCount: 0,
     likedByMe: false,
+    repostedByMe: false,
   }
   _posts.unshift(post)
+  savePosts()
   return post
 }
 
 export async function deletePost(id) {
   await delay(200)
   _posts = _posts.filter(p => p._id !== id)
+  savePosts()
 }
 
 export async function toggleLike(id) {
@@ -104,7 +122,19 @@ export async function toggleLike(id) {
   if (!post) throw new Error('Post not found')
   post.likedByMe = !post.likedByMe
   post.likesCount += post.likedByMe ? 1 : -1
+  savePosts()
   return { liked: post.likedByMe, likesCount: post.likesCount }
+}
+
+export async function toggleRepost(id) {
+  await delay(150)
+  const post = _posts.find(p => p._id === id)
+  if (!post) throw new Error('Post not found')
+  post.repostedByMe = !post.repostedByMe
+  post.repostsCount = (post.repostsCount || 0) + (post.repostedByMe ? 1 : -1)
+  if (post.repostsCount < 0) post.repostsCount = 0
+  savePosts()
+  return { reposted: post.repostedByMe, repostsCount: post.repostsCount }
 }
 
 export async function searchPosts(q, page = 1) {
