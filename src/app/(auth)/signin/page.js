@@ -44,7 +44,7 @@ export default function SignInPage() {
       return;
     }
     setError("");
-    setInfoMessage(`Simulation: Un e-mail de réinitialisation de mot de passe a été envoyé à l'adresse ${email.trim()}.`);
+    setInfoMessage(`Un e-mail de réinitialisation de mot de passe a été envoyé à l'adresse ${email.trim()}.`);
   }
 
   return (
