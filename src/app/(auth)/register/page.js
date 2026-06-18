@@ -9,7 +9,8 @@ import { register } from '@/services/authService'
 import { validateRegisterForm } from '@/utils/validators'
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ email: '', password: '', username: '' })
+  // 1. Ajout de confirmPassword dans l'objet initial du formulaire
+  const [form, setForm] = useState({ email: '', password: '', confirmPassword: '', username: '' })
   const [errors, setErrors] = useState({})
   const [apiErr, setApiErr] = useState('')
   const [loading, setLoading] = useState(false)
@@ -21,12 +22,26 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setApiErr('')
+
+    // Validation initiale via ton utilitaire
     const errs = validateRegisterForm(form)
+
+    // 2. Vérification manuelle de la correspondance des mots de passe
+    if (form.password !== form.confirmPassword) {
+      errs.confirmPassword = "Les mots de passe ne correspondent pas."
+    }
+
     if (Object.keys(errs).length) { setErrors(errs); return }
     setErrors({})
     setLoading(true)
+
     try {
-      const data = await register(form)
+      // On envoie les données à l'API (on peut exclure confirmPassword ou l'envoyer selon ce que ton API attend)
+      const data = await register({
+        username: form.username,
+        email: form.email,
+        password: form.password
+      })
       saveToken(data.token); setUser(data.user)
       router.push('/home')
     } catch (err) {
@@ -49,10 +64,16 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <Input label="Nom d'utilisateur" type="text" placeholder="votre_pseudo"
               value={form.username} onChange={upd('username')} error={errors.username} disabled={loading} />
+
             <Input label="Courriel" type="email" placeholder="nom@exemple.com"
               value={form.email} onChange={upd('email')} error={errors.email} disabled={loading} />
+
             <Input label="Mot de passe" type="password" placeholder="••••••••"
               value={form.password} onChange={upd('password')} error={errors.password} disabled={loading} />
+
+            {/* 3. Nouveau champ de validation du mot de passe */}
+            <Input label="Confirmez le mot de passe" type="password" placeholder="••••••••"
+              value={form.confirmPassword} onChange={upd('confirmPassword')} error={errors.confirmPassword} disabled={loading} />
 
             {apiErr && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-2.5">{apiErr}</p>}
 

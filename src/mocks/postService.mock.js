@@ -1,4 +1,5 @@
-import { MOCK_POSTS, MOCK_USERS, MOCK_COMMENTS } from './data'
+import { MOCK_POSTS, MOCK_USERS } from './data'
+import { _comments } from './commentService.mock'
 import { delay } from './utils'
 
 const STORAGE_KEY = 'breezy_mock_posts'
@@ -17,7 +18,7 @@ function savePosts() {
   if (typeof window === 'undefined') return
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(_posts))
-  } catch {}
+  } catch { }
 }
 
 let _posts = loadPosts()
@@ -44,7 +45,7 @@ export async function getUserPosts(uid, page = 1) {
 export async function getUserReplies(uid, page = 1) {
   await delay(300)
   const replies = []
-  for (const [postId, comments] of Object.entries(MOCK_COMMENTS)) {
+  for (const [postId, comments] of Object.entries(_comments)) {
     const parentPost = _posts.find(p => p._id === postId)
     comments
       .filter(c => c.author?._id === uid)
@@ -56,7 +57,7 @@ export async function getUserReplies(uid, page = 1) {
           createdAt: c.createdAt,
           replyTo: parentPost?.author?.username || null,
           likesCount: 0,
-          commentsCount: 0,
+          commentsCount: comments.filter(reply => reply.parentId === c._id).length,
           repostsCount: 0,
           viewsCount: 0,
           likedByMe: false,
@@ -114,6 +115,16 @@ export async function deletePost(id) {
   await delay(200)
   _posts = _posts.filter(p => p._id !== id)
   savePosts()
+}
+
+export async function updatePost(id, { content, media }) {
+  await delay(200)
+  const post = _posts.find(p => p._id === id)
+  if (!post) throw new Error('Post not found')
+  if (content !== undefined) post.content = content
+  if (media !== undefined) post.imageUrl = media
+  savePosts()
+  return post
 }
 
 export async function toggleLike(id) {

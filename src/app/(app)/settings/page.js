@@ -9,7 +9,7 @@ import { changePassword } from '@/services/authService'
 export default function SettingsPage() {
   const { logout, user } = useAuth() // On récupère logout et l'utilisateur actuel
   const router = useRouter()
-  
+
   // États pour le formulaire de mot de passe
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -26,7 +26,7 @@ export default function SettingsPage() {
       await changePassword({ oldPassword, newPassword })
 
       setSuccess(true)
-      
+
       // 🔒 Déconnexion de sécurité automatique après 2 secondes
       setTimeout(() => {
         logout() // Vide le token et l'utilisateur global
@@ -43,7 +43,7 @@ export default function SettingsPage() {
   return (
     <AppShell backHref="/home">
       <div className="p-6 max-w-xl mx-auto space-y-8">
-        
+
         {/* En-tête des paramètres */}
         <div>
           <h1 className="text-2xl font-bold text-breezy-dark">Paramètres</h1>
@@ -68,15 +68,15 @@ export default function SettingsPage() {
                   {error}
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-xs font-semibold text-breezy-muted mb-2 uppercase tracking-wider">
                   Ancien mot de passe
                 </label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   required
-                  value={oldPassword} 
+                  value={oldPassword}
                   onChange={e => setOldPassword(e.target.value)}
                   className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-breezy-primary focus:bg-white transition-all text-sm"
                   placeholder="••••••••"
@@ -87,10 +87,10 @@ export default function SettingsPage() {
                 <label className="block text-xs font-semibold text-breezy-muted mb-2 uppercase tracking-wider">
                   Nouveau mot de passe
                 </label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   required
-                  value={newPassword} 
+                  value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-breezy-primary focus:bg-white transition-all text-sm"
                   placeholder="Minimum 6 caractères"
@@ -98,8 +98,8 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex justify-end pt-2">
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={loading}
                   className="px-6 py-2.5 bg-breezy-dark text-white font-medium rounded-full hover:opacity-95 disabled:opacity-50 transition-all text-sm"
                 >
@@ -113,7 +113,7 @@ export default function SettingsPage() {
         {/* Optionnel : Bouton de déconnexion directe en bas de page */}
         <hr className="border-gray-100" />
         <div className="flex justify-start">
-          <button 
+          <button
             onClick={() => {
               logout()
               router.replace('/signin')
