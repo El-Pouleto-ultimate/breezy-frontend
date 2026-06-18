@@ -57,6 +57,13 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
     router.push(`/search?q=${encodeURIComponent(term)}`)
   }
 
+  // Nettoie la saisie en retirant tous les symboles "#" en temps réel
+  function handleInputChange(e) {
+    const value = e.target.value
+    const cleanValue = value.replace(/#/g, '')
+    setQ(cleanValue)
+  }
+
   return (
     <div className="relative px-4 py-2" ref={wrapperRef}>
       <form onSubmit={handleSubmit}>
@@ -66,7 +73,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
           </svg>
           <input
             value={q}
-            onChange={e => setQ(e.target.value)}
+            onChange={handleInputChange} // Changement appliqué ici
             onFocus={() => setFocused(true)}
             placeholder={placeholder}
             autoFocus={autoFocus}
