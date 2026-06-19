@@ -33,7 +33,7 @@ export default function ComposePage() {
     if ((!text.trim() && !mediaPreview) || over || loading) return
     setL(true)
     try {
-      await createPost({ content: text, imageUrl: mediaPreview })
+      await createPost({ content: text, media: mediaPreview })
       window.dispatchEvent(new Event('postCreated'))
       router.push('/home')
     } finally { setL(false) }

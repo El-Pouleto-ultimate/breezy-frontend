@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useLike } from '@/hooks/useLike'
-import { toggleRepost } from '@/services/postService'
+import { toggleRepost, updatePost, deletePost } from '@/services/postService'
 
 function Ico({ d, cls = 'w-5 h-5' }) { return <svg viewBox="0 0 24 24" className={cls}><path d={d} /></svg> }
 
