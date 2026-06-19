@@ -1,12 +1,9 @@
 'use client'
-
-
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useComments } from '@/hooks/useComments'
 import Avatar from '@/components/ui/Avatar'
 import Spinner from '@/components/ui/Spinner'
 import { timeAgo } from '@/utils/formatDate'
-import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 
 function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
@@ -14,38 +11,28 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
   const [editContent, setEditContent] = useState(c.content)
   const [isSaving, setIsSaving] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
-  
   const [isReplying, setIsReplying] = useState(false)
   const [replyContent, setReplyContent] = useState('')
   const [isSendingReply, setIsSendingReply] = useState(false)
-  
+
   const authorId = c?.author?._id || c?.author?.id || c?.user_id
   const myId = user?._id || user?.id
   const isAuthor = Boolean(myId && authorId && myId === authorId)
 
   const handleSave = async () => {
-    if (!editContent.trim() || editContent === c.content) {
-      setIsEditing(false)
-      return
-    }
+    if (!editContent.trim() || editContent === c.content) { setIsEditing(false); return }
     setIsSaving(true)
     try {
       await onUpdate(c._id || c.id, editContent)
       setIsEditing(false)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsSaving(false)
-    }
+    } catch (err) { console.error(err) }
+    finally { setIsSaving(false) }
   }
 
   const handleDelete = async () => {
     if (!window.confirm('Voulez-vous vraiment supprimer ce commentaire ?')) return
-    try {
-      await onRemove(c._id || c.id)
-    } catch (err) {
-      console.error(err)
-    }
+    try { await onRemove(c._id || c.id) }
+    catch (err) { console.error(err) }
   }
 
   const handleSendReply = async () => {
@@ -55,11 +42,8 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
       await onReply(c._id || c.id, replyContent)
       setReplyContent('')
       setIsReplying(false)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsSendingReply(false)
-    }
+    } catch (err) { console.error(err) }
+    finally { setIsSendingReply(false) }
   }
 
   return (
@@ -71,7 +55,6 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
             <span className="font-bold text-sm text-breezy-dark mr-1.5">{c.author?.username || c.username}</span>
             <span className="text-breezy-muted text-xs">· {timeAgo(c.createdAt)}</span>
           </div>
-          
           <div className="flex items-center gap-2">
             {!isEditing && (
               <button onClick={() => setIsReplying(!isReplying)} className="text-xs font-semibold text-breezy-muted hover:text-breezy-primary transition-colors">
@@ -96,7 +79,7 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
             )}
           </div>
         </div>
-        
+
         {isEditing ? (
           <div className="mt-1">
             <textarea
@@ -146,18 +129,24 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
   )
 }
 
-export default function CommentThread({ post, isOpen, onClose, onCommentAdded, onCommentRemoved }) {
+export default function CommentThread({ post, isOpen, onClose, onCommentAdded, onCommentRemoved, onCommentsLoaded }) {
   const { user } = useAuth()
   const { comments, loading, addComment, updateComment, removeComment, replyComment } = useComments(isOpen ? post?._id : null)
   const [reply, setReply] = useState('')
   const [sending, setSending] = useState(false)
   const sheetRef = useRef(null)
 
-  // Fermer le thread si l'utilisateur clique en dehors du sheet
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
+
+  // Notifier le parent du vrai nombre de commentaires
+  useEffect(() => {
+    if (!loading && isOpen && onCommentsLoaded) {
+      onCommentsLoaded(comments.length)
+    }
+  }, [loading, comments.length, isOpen])
 
   async function handleSend(e) {
     e.preventDefault()
@@ -167,8 +156,7 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
       const c = await addComment(reply)
       setReply('')
       onCommentAdded?.(c)
-    }
-    finally { setSending(false) }
+    } finally { setSending(false) }
   }
 
   async function handleRemove(commentId) {
@@ -180,34 +168,19 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-50 bg-black/40"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
-      {/* Sheet */}
-      <div
-        ref={sheetRef}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl max-h-[85vh] flex flex-col max-w-lg mx-auto"
-      >
-        {/* Handle */}
+      <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div ref={sheetRef} className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl max-h-[85vh] flex flex-col max-w-lg mx-auto">
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 bg-gray-300 rounded-full" />
         </div>
 
-        {/* Header */}
         <div className="flex items-center justify-between px-4 py-2 border-b border-breezy-border">
-          <span className="font-bold text-breezy-dark">Réponses</span>
+          <span className="font-bold text-breezy-dark">Réponses ({comments.length})</span>
           <button onClick={onClose} className="text-breezy-muted hover:text-breezy-dark p-1 rounded-full hover:bg-breezy-hover">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
-              <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z" />
-            </svg>
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z" /></svg>
           </button>
         </div>
 
-        {/* Original post */}
         <div className="flex gap-3 px-4 py-3 border-b border-breezy-border">
           <Avatar src={post?.author?.avatar} username={post?.author?.username} size="md" />
           <div className="flex-1">
@@ -219,31 +192,17 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
           </div>
         </div>
 
-        {/* Comment list */}
         <div className="flex-1 overflow-y-auto">
           {loading && <div className="flex justify-center py-8"><Spinner /></div>}
           {!loading && comments.length === 0 && (
-            <p className="text-center text-breezy-muted text-sm py-8">
-              Aucune réponse. Sois le premier !
-            </p>
+            <p className="text-center text-breezy-muted text-sm py-8">Aucune réponse. Sois le premier !</p>
           )}
           {comments.map(c => (
-            <CommentItem 
-              key={c._id} 
-              c={c} 
-              user={user} 
-              onUpdate={updateComment} 
-              onRemove={handleRemove} 
-              onReply={replyComment}
-            />
+            <CommentItem key={c._id} c={c} user={user} onUpdate={updateComment} onRemove={handleRemove} onReply={replyComment} />
           ))}
         </div>
 
-        {/* Reply composer */}
-        <form
-          onSubmit={handleSend}
-          className="flex items-center gap-3 px-4 py-3 border-t border-breezy-border bg-white"
-        >
+        <form onSubmit={handleSend} className="flex items-center gap-3 px-4 py-3 border-t border-breezy-border bg-white">
           <Avatar src={user?.avatar} username={user?.username} size="sm" />
           <input
             value={reply}
@@ -252,11 +211,7 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
             className="flex-1 bg-breezy-bg rounded-full px-4 py-2 text-sm outline-none text-breezy-dark placeholder:text-breezy-muted"
             disabled={sending}
           />
-          <button
-            type="submit"
-            disabled={!reply.trim() || sending}
-            className="text-breezy-primary disabled:opacity-30 transition-opacity font-semibold text-sm"
-          >
+          <button type="submit" disabled={!reply.trim() || sending} className="text-breezy-primary disabled:opacity-30 transition-opacity font-semibold text-sm">
             {sending ? '...' : 'Publier'}
           </button>
         </form>
