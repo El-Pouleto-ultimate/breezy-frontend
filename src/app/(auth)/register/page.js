@@ -43,7 +43,7 @@ export default function RegisterPage() {
         password: form.password
       })
       saveToken(data.token); setUser(data.user)
-      router.push('/home')
+      router.replace('/home')
     } catch (err) {
       setApiErr(err?.response?.data?.message || 'Erreur lors de la création du compte.')
     } finally { setLoading(false) }

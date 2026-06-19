@@ -31,7 +31,7 @@ export default function SignInPage() {
       const data = await login({ email, password })
       saveToken(data.token)
       setUser(data.user)
-      router.push('/home')
+      router.replace('/home')
     } catch (err) {
       setError(err?.response?.data?.message || 'Identifiants incorrects.')
     } finally { setLoading(false) }
