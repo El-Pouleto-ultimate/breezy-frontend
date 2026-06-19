@@ -11,19 +11,13 @@ import FollowersModal from './FollowersModal'
 function LocationIcon() { return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-breezy-muted"><path d="M12 7c-1.933 0-3.5 1.567-3.5 3.5S10.067 14 12 14s3.5-1.567 3.5-3.5S13.933 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 8.5 12 8.5s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-3.866 0-7 3.134-7 7 0 5.25 6.375 11.645 6.648 11.915.182.178.416.267.652.267.236 0 .47-.089.652-.267C13.625 20.645 20 14.25 20 9c0-3.866-3.134-7-8-7zm0 17.79C10.12 17.75 7 13.76 7 9c0-2.757 2.243-5 5-5s5 2.243 5 5c0 4.76-3.12 8.75-5 9.79z" /></svg> }
 function CalIcon() { return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-breezy-muted"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm0-13H5V5h14v1zM7 10h5v5H7z" /></svg> }
 
-export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onTabChange, onProfileUpdate }) {
+export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onTabChange }) {
   const { user } = useAuth()
   const { following, toggle, loading } = useFollow(profile?.id, profile?.followedByMe)
 
   const handleToggleFollow = async () => {
-    try {
-      await toggle()
-      if (typeof onProfileUpdate === 'function') {
-        onProfileUpdate()
-      }
-    } catch (error) {
-      console.error("Erreur follow/unfollow:", error)
-    }
+    await toggle()
+    if (onProfileUpdate) onProfileUpdate()
   }
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -37,7 +31,7 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
   }
 
   return (
-    <div className="w-full overflow-hidden">
+    <div>
       {/* Banner */}
       <div className="h-32 bg-gradient-to-r from-gray-200 to-gray-300 relative">
         {profile.banner && <img src={profile.banner} className="w-full h-full object-cover" alt="Banner" />}
@@ -46,43 +40,37 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
       {/* Avatar + action buttons */}
       <div className="px-4 pb-3">
         <div className="flex items-end justify-between -mt-8 mb-3">
-          <Avatar src={profile.avatar} username={profile.username} size="xl" className="ring-4 ring-white" />
+          <Avatar src={profile.avatar} username={profile.username} size="xl"
+            className="ring-4 ring-white" />
           <div className="flex gap-2 mt-8">
-            {isOwn ? (
-              <Link href="/profile/edit">
+            {isOwn
+              ? <Link href="/profile/edit">
                 <Button variant="secondary" className="px-4 py-1.5 rounded-full font-semibold text-sm">
                   Edit profile
                 </Button>
               </Link>
-            ) : (
-              <Button
+              : <Button
                 variant={following ? 'unfollow' : 'follow'}
                 onClick={handleToggleFollow}
                 loading={loading}
               >
                 {following ? 'Ne plus suivre' : 'Suivre'}
               </Button>
-            )}
+            }
           </div>
         </div>
 
-        {/* Name + @handle sécurisés contre le débordement */}
-        <div className="min-w-0 flex flex-col">
-          <h1 className="font-bold text-xl text-breezy-dark truncate">{profile.username}</h1>
-          <p className="text-breezy-muted text-sm truncate">@{profile.username}</p>
-        </div>
+        {/* Name + @handle */}
+        <h1 className="font-bold text-xl text-breezy-dark">{profile.username}</h1>
+        <p className="text-breezy-muted text-sm">@{profile.username}</p>
 
-        {/* Bio limitée à 160 caractères */}
-        {profile.bio && (
-          <p className="mt-2 text-sm text-breezy-dark whitespace-pre-wrap leading-relaxed break-words max-w-full">
-            {profile.bio.length > 160 ? `${profile.bio.slice(0, 160)}...` : profile.bio}
-          </p>
-        )}
+        {/* Bio (pas de troncature) */}
+        {profile.bio && <p className="mt-2 text-sm text-breezy-dark whitespace-pre-wrap leading-relaxed">{profile.bio}</p>}
 
         {/* Meta */}
         <div className="flex items-center gap-4 mt-2 flex-wrap">
           {profile.location && (
-            <span className="flex items-center gap-1 text-sm text-breezy-muted truncate max-w-xs">
+            <span className="flex items-center gap-1 text-sm text-breezy-muted">
               <LocationIcon />{profile.location}
             </span>
           )}

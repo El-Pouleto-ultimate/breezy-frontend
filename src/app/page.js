@@ -49,6 +49,14 @@ export default function ConnectPage() {
             <Link href="/legal/privacy" className="text-breezy-primary hover:underline">Politique de confidentialité</Link>
             , y compris l'utilisation de cookies.
           </p>
+
+          <div className="mt-4 text-xs text-breezy-muted text-center flex flex-wrap justify-center gap-x-3 gap-y-1 px-4">
+            <Link href="/legal/cookies" className="hover:underline">Politique relative aux cookies</Link>
+            <Link href="/legal/accessibility" className="hover:underline">Accessibilité</Link>
+            <Link href="/legal/ads" className="hover:underline">Informations sur les annonces</Link>
+            <span>© 2026 Breezy Corp.</span>
+          </div>
+
         </div>
       </div>
     </div>
