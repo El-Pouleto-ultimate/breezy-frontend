@@ -44,8 +44,8 @@ export default function NotificationsPage() {
   return (
     <AppShell title="Notifications">
       {/* Tabs */}
-      <div className="flex border-b border-breezy-border sticky top-14 z-30 bg-white">
-        {[{ id: 'all', label: 'Toutes' }, { id: 'mention', label: 'Mentions' }].map(t => (
+      <div className="flex border-b border-breezy-border sticky top-0 z-30 bg-white">
+          {[{ id: 'all', label: 'Toutes' }, { id: 'mention', label: 'Mentions' }].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex-1 py-3 text-sm font-medium transition-colors relative ${tab === t.id ? 'text-breezy-dark' : 'text-breezy-muted hover:bg-breezy-hover'}`}>
             {t.label}
