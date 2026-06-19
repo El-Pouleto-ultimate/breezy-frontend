@@ -19,8 +19,8 @@ export function usePosts() {
     finally { setLoading(false) }
   }, [])
 
-  useEffect(() => { 
-    load(1) 
+  useEffect(() => {
+    load(1)
     const handleRefresh = () => load(1)
     window.addEventListener('postCreated', handleRefresh)
     return () => window.removeEventListener('postCreated', handleRefresh)
@@ -31,7 +31,10 @@ export function usePosts() {
     hasMore: page < totalPages,
     loadMore: () => page < totalPages && load(page + 1),
     prependPost: (p) => setPosts(prev => [p, ...prev]),
-    updatePost:  (p) => setPosts(prev => prev.map(x => x._id === p._id ? p : x)),
+    updatePost:  (p) => setPosts(prev => p.deleted
+      ? prev.filter(x => x._id !== p._id)
+      : prev.map(x => x._id === p._id ? p : x)
+    ),
     refresh: () => load(1)
   }
 }
