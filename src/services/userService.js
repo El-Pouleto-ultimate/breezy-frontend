@@ -4,7 +4,9 @@ import api from './api'
 
 const real = {
   getUserById: (id) => api.get(`/users/${id}`).then(r => r.data),
-  updateProfile: (id, d) => api.put(`/users/${id}`, d).then(r => r.data),
+  
+  updateProfile: (id, d) => api.put(`/profils/${id}`, d).then(r => r.data),
+  
   followUser: (id) => api.post(`/users/${id}/follow`).then(r => r.data),
   unfollowUser: (id) => api.delete(`/users/${id}/follow`).then(r => r.data),
   getFollowing: (id) => api.get(`/users/${id}/following`).then(r => r.data),
