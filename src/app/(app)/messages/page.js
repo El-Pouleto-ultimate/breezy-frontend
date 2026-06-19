@@ -11,23 +11,32 @@ export default function MessagesPage() {
   const [conversations, setConversations] = useState([])
   const router = useRouter()
 
-  // ⚡ SYNCHRONISATION : On va chercher les derniers messages du sessionStorage
+  // ⚡ SYNCHRONISATION : On met à jour les messages ET l'état de lecture (pastille bleue)
   useEffect(() => {
     const dynamicConvs = MOCK_CONVERSATIONS.map(conv => {
+      let updatedConv = { ...conv }
+
+      // 1. On récupère le dernier message s'il existe
       const savedMessages = sessionStorage.getItem(`breezy_messages_${conv.id}`)
       if (savedMessages) {
         const messagesArray = JSON.parse(savedMessages)
         if (messagesArray.length > 0) {
           const lastMessageObj = messagesArray[messagesArray.length - 1]
-          return {
-            ...conv,
-            lastMsg: lastMessageObj.text, // Affiche le tout dernier message envoyé
-            time: lastMessageObj.time     // Met à jour l'heure de l'aperçu
-          }
+          updatedConv.lastMsg = lastMessageObj.text
+          updatedConv.time = lastMessageObj.time
+          updatedConv.unread = false // 🔥 Si un message a été envoyé, la discussion est forcément lue !
         }
       }
-      return conv
+
+      // 2. On vérifie si la conversation a été marquée comme ouverte/lue
+      const isRead = sessionStorage.getItem(`breezy_read_${conv.id}`)
+      if (isRead === 'true') {
+        updatedConv.unread = false // Enlève la pastille bleue
+      }
+
+      return updatedConv
     })
+
     setConversations(dynamicConvs)
   }, [])
 
@@ -61,16 +70,19 @@ export default function MessagesPage() {
       {/* Conversations */}
       <div>
         {filteredConvs.map(conv => {
-          // 🎯 URL PROFIL : Transforme "Thomas Petit" en "user_thomas"
           const profileSlug = `user_${conv.user.username.toLowerCase().split(' ')[0]}`
 
           return (
             <div
               key={conv.id}
-              onClick={() => router.push(`/messages/${conv.id}`)}
+              onClick={() => {
+                // 🛑 ASTUCE : On marque comme lu dans le sessionStorage IMMÉDIATEMENT au clic !
+                sessionStorage.setItem(`breezy_read_${conv.id}`, 'true')
+                router.push(`/messages/${conv.id}`)
+              }}
               className="flex items-center gap-3 px-4 py-3 hover:bg-breezy-hover transition-colors cursor-pointer border-b border-breezy-border"
             >
-              {/* Clic sur l'avatar redirige vers le bon profil */}
+              {/* Clic sur l'avatar redirige vers le profil */}
               <div 
                 onClick={(e) => {
                   e.stopPropagation() // Empêche d'ouvrir le chat
@@ -88,6 +100,7 @@ export default function MessagesPage() {
                 </div>
                 <p className="text-sm text-breezy-muted truncate mt-0.5">{conv.lastMsg}</p>
               </div>
+              {/* La pastille bleue ne s'affiche que si conv.unread est true */}
               {conv.unread && <div className="w-2.5 h-2.5 bg-breezy-primary rounded-full flex-shrink-0" />}
             </div>
           )
