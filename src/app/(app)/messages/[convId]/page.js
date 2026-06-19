@@ -3,19 +3,44 @@ import { useState, useRef, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
-
 import { MOCK_CONVERSATIONS, MOCK_USERS } from '@/mocks/data'
 
-const MOCK_MESSAGES = [
-  { id: 'm1', senderId: '1', text: 'Salut, on est toujours d\'accord pour la revue de conception ?', time: new Date(Date.now() - 180000).toISOString() },
-  { id: 'm2', senderId: 'me', text: 'Oui ! Je termine juste quelques composants.', time: new Date(Date.now() - 120000).toISOString() },
-  { id: 'm3', senderId: '1', text: 'Génial, j\'ai hâte de les voir.', time: new Date(Date.now() - 60000).toISOString() },
-]
+const INITIAL_MESSAGES = {
+  '1': [
+    { id: 'm1', senderId: '1', text: "Salut, on est toujours d'accord pour la revue de conception ?", time: new Date(Date.now() - 180000).toISOString() },
+    { id: 'm2', senderId: 'me', text: 'Oui ! Je termine juste quelques composants.', time: new Date(Date.now() - 120000).toISOString() },
+    { id: 'm3', senderId: '1', text: "Génial, j'ai hâte de les voir.", time: new Date(Date.now() - 60000).toISOString() },
+  ],
+  '2': [
+    { id: 'm4', senderId: '2', text: "Ça marche, je t'envoie le lien Figma ce soir.", time: new Date(Date.now() - 3600000).toISOString() },
+  ],
+  '3': [
+    { id: 'm5', senderId: '3', text: "Peux-tu revoir le dernier rapport d'accessibilité ?", time: new Date(Date.now() - 86400000).toISOString() },
+  ],
+  '4': [
+    { id: 'm6', senderId: '4', text: "Fusionnons les changements typographiques d'abord.", time: new Date(Date.now() - 172800000).toISOString() },
+  ],
+}
+
+function loadMessages(convId) {
+  try {
+    const saved = sessionStorage.getItem(`breezy_messages_${convId}`)
+    return saved ? JSON.parse(saved) : (INITIAL_MESSAGES[convId] || [])
+  } catch {
+    return INITIAL_MESSAGES[convId] || []
+  }
+}
+
+function saveMessages(convId, messages) {
+  try {
+    sessionStorage.setItem(`breezy_messages_${convId}`, JSON.stringify(messages))
+  } catch {}
+}
 
 export default function ChatPage() {
   const { convId } = useParams()
   const router = useRouter()
-  const [messages, setMessages] = useState(MOCK_MESSAGES)
+  const [messages, setMessages] = useState(() => loadMessages(convId))
   const [text, setText] = useState('')
   const endRef = useRef(null)
 
@@ -31,7 +56,10 @@ export default function ChatPage() {
   function handleSend(e) {
     e.preventDefault()
     if (!text.trim()) return
-    setMessages([...messages, { id: Date.now().toString(), senderId: 'me', text, time: new Date().toISOString() }])
+    const newMsg = { id: Date.now().toString(), senderId: 'me', text, time: new Date().toISOString() }
+    const updated = [...messages, newMsg]
+    setMessages(updated)
+    saveMessages(convId, updated)
     setText('')
   }
 
@@ -62,8 +90,7 @@ export default function ChatPage() {
           const isMe = m.senderId === 'me'
           return (
             <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[70%] px-4 py-2.5 rounded-2xl ${isMe ? 'bg-breezy-primary text-white rounded-br-sm' : 'bg-breezy-bg text-breezy-dark rounded-bl-sm'
-                }`}>
+              <div className={`max-w-[70%] px-4 py-2.5 rounded-2xl ${isMe ? 'bg-breezy-primary text-white rounded-br-sm' : 'bg-breezy-bg text-breezy-dark rounded-bl-sm'}`}>
                 <p className="text-[15px] leading-relaxed break-words">{m.text}</p>
               </div>
             </div>
