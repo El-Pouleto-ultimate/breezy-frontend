@@ -47,7 +47,7 @@ export default function ChatPage() {
   const conv = MOCK_CONVERSATIONS.find(c => c.id === convId)
   const userFallback = Object.values(MOCK_USERS).find(u => u._id === convId)
   const partner = conv?.user || userFallback || { username: 'Utilisateur', avatar: '' }
-  const partnerId = partner._id || partner.id || convId
+  const partnerSlug = `user_${partner.username.toLowerCase().split(' ')[0]}`
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -72,16 +72,14 @@ export default function ChatPage() {
             <path d="M20 11H7.414l4.293-4.293c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0l-6 6c-.39.39-.39 1.023 0 1.414l6 6c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L7.414 13H20c.553 0 1-.447 1-1s-.447-1-1-1z" />
           </svg>
         </button>
-        <Link href={`/profile/${partnerId}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <Avatar src={partner.avatar} username={partner.username} size="sm" />
+        <Link href={`/profile/${partnerSlug}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">          <Avatar src={partner.avatar} username={partner.username} size="sm" />
           <span className="font-bold text-breezy-dark">{partner.username}</span>
         </Link>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-24">
-        <Link href={`/profile/${partnerId}`} className="flex flex-col items-center py-6 border-b border-breezy-border mb-4 hover:opacity-80 transition-opacity">
-          <Avatar src={partner.avatar} username={partner.username} size="xl" />
+      <Link href={`/profile/${partnerSlug}`} className="flex flex-col items-center py-6 border-b border-breezy-border mb-4 hover:opacity-80 transition-opacity">          <Avatar src={partner.avatar} username={partner.username} size="xl" />
           <span className="font-bold text-lg mt-2">{partner.username}</span>
           <span className="text-sm text-breezy-muted">@{partner.username.replace(' ', '').toLowerCase()}</span>
         </Link>
