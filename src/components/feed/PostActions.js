@@ -1,7 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { useLike } from '@/hooks/useLike'
-import { toggleRepost, updatePost, deletePost } from '@/services/postService'
+import { useAuth } from '@/hooks/useAuth'
+import { toggleRepost, deletePost } from '@/services/postService'
 
 function Ico({ d, cls = 'w-5 h-5' }) { return <svg viewBox="0 0 24 24" className={cls}><path d={d} /></svg> }
 
@@ -10,17 +11,19 @@ const REPOST_D = "M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13
 const STATS_D = "M9 17c0 .55-.45 1-1 1s-1-.45-1-1v-5c0-.55.45-1 1-1s1 .45 1 1v5zm4 0c0 .55-.45 1-1 1s-1-.45-1-1V7c0-.55.45-1 1-1s1 .45 1 1v10zm4 0c0 .55-.45 1-1 1s-1-.45-1-1v-2c0-.55.45-1 1-1s1 .45 1 1v2z"
 const HEART_O = "M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
 const HEART_F = "M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
+const DOTS_D = "M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"
 
-export default function PostActions({ post, onComment, onUpdate }) {
+export default function PostActions({ post, onComment, onUpdate, onEdit }) {
+  const { user } = useAuth()
   const { liked, count, handleLike } = useLike(post, onUpdate)
   const [reposted, setReposted] = useState(post?.repostedByMe || false)
   const [repostsCount, setRepostsCount] = useState(post?.repostsCount || 0)
   const [showStats, setShowStats] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
 
-  // Calcule le nombre de commentaires réel
+  const isOwnPost = post?.author?._id === user?.id || post?.author?.id === user?.id || post?.userId === user?.id || post?.userId === user?._id
+
   const exactCommentsCount = Array.isArray(post?.comments) ? post.comments.length : (post?.commentsCount || 0)
-
-  // Calcule un nombre de vues réaliste si non fourni
   const views = post?.viewsCount || (post?.likesCount * 12 + 45) || 150
 
   async function handleRepost() {
@@ -38,6 +41,16 @@ export default function PostActions({ post, onComment, onUpdate }) {
     } catch {
       setReposted(was)
       setRepostsCount(prevCount)
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm("Voulez-vous vraiment supprimer ce post ?")) return
+    try {
+      await deletePost(post._id)
+      onUpdate?.({ ...post, deleted: true })
+    } catch (err) {
+      alert("Erreur lors de la suppression")
     }
   }
 
@@ -68,6 +81,30 @@ export default function PostActions({ post, onComment, onUpdate }) {
         <Ico d={STATS_D} cls="w-[18px] h-[18px] fill-current" />
         <span className="text-xs">{views}</span>
       </button>
+
+      {/* Menu d'options (3 points) */}
+      {isOwnPost && (
+        <div className="relative">
+          <button onClick={() => setShowMenu(!showMenu)} className="text-breezy-muted hover:text-breezy-dark p-2 rounded-full hover:bg-gray-100" title="Options">
+            <Ico d={DOTS_D} cls="w-[18px] h-[18px] fill-current" />
+          </button>
+          
+          {showMenu && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+              <div className="absolute right-0 bottom-10 z-20 bg-white border border-breezy-border rounded-2xl shadow-xl py-2 w-36 overflow-hidden">
+                {/* ⚡ Déclenche le mode édition inline du parent */}
+                <button onClick={() => { onEdit(); setShowMenu(false) }} className="w-full text-left px-4 py-2 text-sm text-breezy-dark hover:bg-breezy-bg font-medium">
+                  Modifier
+                </button>
+                <button onClick={() => { handleDelete(); setShowMenu(false) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">
+                  Supprimer
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Stats Modal */}
       {showStats && (
