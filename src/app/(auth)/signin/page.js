@@ -22,7 +22,7 @@ export default function SignInPage() {
   const router = useRouter()
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault() 
     setError('')
     setInfoMessage('')
     if (!email.trim() || !password.trim()) { setError('Tous les champs sont requis.'); return }

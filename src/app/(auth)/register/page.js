@@ -16,21 +16,32 @@ export default function RegisterPage() {
   const { setUser, saveToken } = useAuth()
   const router = useRouter()
 
-  const upd = f => e => setForm(p => ({ ...p, [f]: e.target.value }))
-
+  function upd(f) {
+    //On passe le nom du champ 
+    return function (e) {
+      // On récupère l'événement du changement 
+      return setForm(function (p) {
+        // On récupère l'état précédent du formulaire
+        // On crée un nouvel objet fusionné
+        let nouvelEtat = Object.assign({}, p); 
+        nouvelEtat[f] = e.target.value; 
+        
+        return nouvelEtat;
+      });
+    };
+  }
   async function handleSubmit(e) {
     e.preventDefault()
     setApiErr('')
 
-    // 1. Récupère les erreurs (incluant désormais les 6 caractères max depuis validators.js)
+    // Récupère les erreurs 
     const errs = validateRegisterForm(form)
 
-    // 2. Vérification de la correspondance des mots de passe
+    //Vérification de la correspondance des mots de passe
     if (form.password !== form.confirmPassword) {
       errs.confirmPassword = "Les mots de passe ne correspondent pas."
     }
 
-    // Si le tableau contient la moindre erreur, on bloque ici et on affiche
     if (Object.keys(errs).length) { 
       setErrors(errs)
       return 
