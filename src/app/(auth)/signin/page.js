@@ -33,18 +33,13 @@ export default function SignInPage() {
       setUser(data.user)
       router.replace('/home')
     } catch (err) {
-      setError(err?.response?.data?.message || 'Identifiants incorrects.')
+      setError(err?.response?.data?.error?.message || 'Identifiants incorrects.')
     } finally { setLoading(false) }
   }
 
   function handleForgotPassword() {
-    if (!email.trim()) {
-      setError("Veuillez saisir votre adresse email pour réinitialiser le mot de passe.");
-      setInfoMessage("");
-      return;
-    }
-    setError("");
-    setInfoMessage(`Un e-mail de réinitialisation de mot de passe a été envoyé à l'adresse ${email.trim()}.`);
+    setError('')
+    setInfoMessage('La reinitialisation de mot de passe n\'est pas encore disponible. Contactez un administrateur.')
   }
 
   return (

@@ -36,18 +36,18 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
   return (
     <>
       <article className="post-card px-4 py-3 flex gap-3">
-        <Link href={`/profile/${post.author?._id}`} className="flex-shrink-0 mt-0.5">
-          <Avatar src={post.author?.avatar} username={post.author?.username || '?'} size="md" />
+        <Link href={`/profile/${post.user_id}`} className="flex-shrink-0 mt-0.5">
+          <Avatar src={post.avatar_url} username={post.username || '?'} size="md" />
         </Link>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1 flex-wrap">
-            <Link href={`/profile/${post.author?._id}`} className="font-bold text-sm text-breezy-dark hover:underline">
-              {post.author?.username}
+            <Link href={`/profile/${post.user_id}`} className="font-bold text-sm text-breezy-dark hover:underline">
+              {post.username}
             </Link>
-            <span className="text-breezy-muted text-sm">@{post.author?.username}</span>
+            <span className="text-breezy-muted text-sm">@{post.username}</span>
             <span className="text-breezy-muted text-sm">·</span>
-            <span className="text-breezy-muted text-sm">{timeAgo(post.createdAt)}</span>
+            <span className="text-breezy-muted text-sm">{timeAgo(post.created_at)}</span>
           </div>
 
           {/* ⚡ Zone de texte interchangeable (Inline Editing) */}
@@ -84,9 +84,9 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
             </p>
           )}
 
-          {post.imageUrl && (
+          {post.media_urls?.length > 0 && (
             <div className="mt-2 rounded-2xl overflow-hidden border border-breezy-border">
-              <img src={post.imageUrl} alt="Post image" className="w-full object-cover max-h-72" />
+              <img src={post.media_urls[0]} alt="Post image" className="w-full object-cover max-h-72" />
             </div>
           )}
 
@@ -109,7 +109,7 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
           if (onUpdate) {
             onUpdate({
               ...post,
-              commentsCount: (post.commentsCount || 0) + 1
+              comments_count: (post.comments_count || 0) + 1
             })
           }
         }}
@@ -117,13 +117,13 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
           if (onUpdate) {
             onUpdate({
               ...post,
-              commentsCount: Math.max(0, (post.commentsCount || 0) - 1)
+              comments_count: Math.max(0, (post.comments_count || 0) - 1)
             })
           }
         }}
         onCommentsLoaded={(count) => {
-          if (onUpdate && count !== post.commentsCount) {
-            onUpdate({ ...post, commentsCount: count })
+          if (onUpdate && count !== post.comments_count) {
+            onUpdate({ ...post, comments_count: count })
           }
         }}
       />

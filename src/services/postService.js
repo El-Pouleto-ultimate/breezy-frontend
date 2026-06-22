@@ -12,7 +12,8 @@ const real = {
   createPost: (d) => api.post('/posts', d).then(r => r.data),
   updatePost: (id, d) => api.put(`/posts/${id}`, d).then(r => r.data),
   deletePost: (id) => api.delete(`/posts/${id}`),
-  toggleLike: (id) => api.post(`/posts/${id}/like`).then(r => r.data),
+  likePost: (id) => api.post(`/posts/${id}/like`).then(r => r.data),
+  unlikePost: (id) => api.delete(`/posts/${id}/like`).then(r => r.data),
   toggleRepost: (id) => api.post(`/posts/${id}/repost`).then(r => r.data),
   searchPosts: (q, p = 1) => api.get(`/posts/search?q=${encodeURIComponent(q)}&page=${p}`).then(r => r.data),
 }
@@ -26,6 +27,7 @@ export const getUserReposts = (...a) => isMockEnabled() ? mock.getUserReposts(..
 export const createPost = (...a) => isMockEnabled() ? mock.createPost(...a) : real.createPost(...a)
 export const updatePost = (...a) => isMockEnabled() ? mock.updatePost(...a) : real.updatePost(...a)
 export const deletePost = (...a) => isMockEnabled() ? mock.deletePost(...a) : real.deletePost(...a)
-export const toggleLike = (...a) => isMockEnabled() ? mock.toggleLike(...a) : real.toggleLike(...a)
+export const likePost = (...a) => isMockEnabled() ? mock.toggleLike(...a) : real.likePost(...a)
+export const unlikePost = (...a) => isMockEnabled() ? mock.toggleLike(...a) : real.unlikePost(...a)
 export const toggleRepost = (...a) => isMockEnabled() ? mock.toggleRepost(...a) : real.toggleRepost(...a)
 export const searchPosts = (...a) => isMockEnabled() ? mock.searchPosts(...a) : real.searchPosts(...a)

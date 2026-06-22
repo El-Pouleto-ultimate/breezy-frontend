@@ -22,8 +22,8 @@ export default function NotificationItem({ notif, onClick }) {
     if (onClick) onClick(notif)
     if (notif.type === 'follow') {
       router.push(`/profile/${notif.actors[0]._id}`)
-    } else if (notif.postId) {
-      router.push(`/post/${notif.postId}`)
+    } else if (notif.actors?.[0]?._id) {
+      router.push(`/profile/${notif.actors[0]._id}`)
     }
   }
 

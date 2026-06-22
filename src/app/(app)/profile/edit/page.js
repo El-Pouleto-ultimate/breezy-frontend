@@ -55,12 +55,13 @@ export default function EditProfilePage() {
     setL(true)
     try {
       const updated = await updateProfile(user?.id, {
-        ...form,
-        description: form.bio,
-        avatar: avatarPreview,
-        banner: bannerPreview
+        display_name: form.username,
+        bio: form.bio,
+        avatar_url: avatarPreview,
+        banner_url: bannerPreview,
+        location: form.location,
       })
-      setUser(updated)
+      setUser(prev => ({ ...prev, display_name: form.username, bio: form.bio }))
       router.back()
     } catch {
       setE('Impossible de sauvegarder les modifications.')

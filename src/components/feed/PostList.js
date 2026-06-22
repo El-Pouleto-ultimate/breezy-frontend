@@ -3,7 +3,7 @@ import PostCard from './PostCard'
 import Spinner from '@/components/ui/Spinner'
 import Button from '@/components/ui/Button'
 
-export default function PostList({ posts, loading, error, hasMore, loadMore, onUpdate }) {
+export default function PostList({ posts = [], loading, error, hasMore, loadMore, onUpdate }) {
   if (loading && posts.length === 0) return (
     <div className="flex justify-center py-12"><Spinner size="lg" /></div>
   )

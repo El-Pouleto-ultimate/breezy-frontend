@@ -6,7 +6,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader'
 import PostCard from '@/components/feed/PostCard'
 import Spinner from '@/components/ui/Spinner'
 import { useAuth } from '@/hooks/useAuth'
-import { getUserById } from '@/services/userService'
+import { getFullProfile } from '@/services/userService'
 import { getUserPosts, getUserReplies, getUserMedia, getUserLikes } from '@/services/postService'
 
 export default function UserProfilePage() {
@@ -25,16 +25,16 @@ export default function UserProfilePage() {
     if (!userId) return
     
     try {
-      const p = await getUserById(userId)
+      const p = await getFullProfile(userId)
       setProfile(p)
       
-      let postsData = { posts: [] }
+      let postsData = { data: [] }
       if (activeTab === 'Posts') postsData = await getUserPosts(userId)
       else if (activeTab === 'Replies') postsData = await getUserReplies(userId)
       else if (activeTab === 'Media') postsData = await getUserMedia(userId)
       else if (activeTab === 'Likes') postsData = await getUserLikes(userId)
-      
-      setPosts(postsData.posts || [])
+
+      setPosts(postsData.data || postsData.posts || [])
     } catch (err) {
       console.error("Erreur chargement profil:", err)
     }
@@ -73,14 +73,14 @@ export default function UserProfilePage() {
   const displayProfile = {
     id: profile?.id || profile?._id,
     username: profile?.username || 'Utilisateur',
-    avatar: profile?.avatar,
+    avatar: profile?.avatar_url || profile?.avatar,
     bio: profile?.bio || '',
     location: profile?.location || '',
-    createdAt: profile?.createdAt || '2022-04-01T00:00:00Z',
-    banner: profile?.banner || '',
+    createdAt: profile?.created_at || profile?.createdAt || '',
+    banner: profile?.banner_url || profile?.banner || '',
     followedByMe: profile?.followedByMe || false,
-    followingCount: profile?.followingCount ?? profile?.following?.length ?? 0,
-    followersCount: profile?.followersCount ?? profile?.followers?.length ?? 0,
+    followingCount: profile?.following_count ?? profile?.followingCount ?? 0,
+    followersCount: profile?.followers_count ?? profile?.followersCount ?? 0,
   }
 
   const postsToShow = posts

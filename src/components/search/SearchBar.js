@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Avatar from '@/components/ui/Avatar'
 
-export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoFocus = false }) {
-  const [q, setQ] = useState('')
+export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoFocus = false, onSearch, initialValue = '' }) {
+  const [q, setQ] = useState(initialValue)
   const [focused, setFocused] = useState(false)
   const [recent, setRecent] = useState([])
   const router = useRouter()
@@ -62,6 +62,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
     const value = e.target.value
     const cleanValue = value.replace(/#/g, '')
     setQ(cleanValue)
+    if (onSearch) onSearch(cleanValue)
   }
 
   return (

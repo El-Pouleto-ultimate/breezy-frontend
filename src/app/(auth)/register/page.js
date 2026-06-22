@@ -59,7 +59,12 @@ export default function RegisterPage() {
       saveToken(data.token); setUser(data.user)
       router.replace('/home')
     } catch (err) {
-      setApiErr(err?.response?.data?.message || 'Erreur lors de la création du compte.')
+      const errData = err?.response?.data?.error
+      if (errData?.details?.length) {
+        setApiErr(errData.details.map(d => d.message).join(' '))
+      } else {
+        setApiErr(errData?.message || 'Erreur lors de la création du compte.')
+      }
     } finally { setLoading(false) }
   }
 

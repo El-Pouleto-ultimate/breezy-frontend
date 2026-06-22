@@ -11,61 +11,75 @@ export function useComments(postId) {
     if (!postId) return
     setL(true)
     getComments(postId).then(d => {
-      const all = d.comments || []
-      const organized = []
-
-      const childrenByParent = {}
-      all.forEach(c => {
-        if (c.parentId) {
-          childrenByParent[c.parentId] = childrenByParent[c.parentId] || []
-          childrenByParent[c.parentId].push(c)
+      const raw = d.data || d.comments || []
+      const flat = []
+      raw.forEach(c => {
+        const { replies, ...parent } = c
+        flat.push(parent)
+        if (Array.isArray(replies)) {
+          replies.forEach(r => flat.push(r))
         }
       })
-
-      const parents = all.filter(c => !c.parentId)
-
-      const addWithDescendants = (c) => {
-        organized.push(c)
-        const children = childrenByParent[c._id || c.id] || []
-        children.forEach(child => addWithDescendants(child))
-      }
-
-      parents.forEach(p => addWithDescendants(p))
-
-      const inOrganized = new Set(organized.map(c => c._id || c.id))
-      const orphans = all.filter(c => !inOrganized.has(c._id || c.id))
-
-      setC([...organized, ...orphans])
+      setC(flat)
     }).catch(() => setE('Erreur.')).finally(() => setL(false))
   }, [postId])
 
   async function addComment(content) {
-    const c = await createComment(postId, { content })
-    setC(p => [c, ...p])
-    return c
+    if (!content || content.length > 280) {
+      setE('Le commentaire doit faire entre 1 et 280 caractères.')
+      return null
+    }
+    try {
+      const c = await createComment(postId, { content })
+      if (c) setC(p => [c, ...p])
+      setE('')
+      return c
+    } catch (err) {
+      setE(err?.response?.data?.error?.message || 'Erreur lors de l\'envoi.')
+      return null
+    }
   }
 
   async function update(commentId, content) {
-    const c = await updateComment(postId, commentId, { content })
-    setC(p => p.map(x => (x._id || x.id) === commentId ? { ...x, content } : x))
-    return c
+    try {
+      const c = await updateComment(postId, commentId, { content })
+      setC(p => p.map(x => (x._id || x.id) === commentId ? { ...x, content } : x))
+      return c
+    } catch (err) {
+      setE(err?.response?.data?.error?.message || 'Erreur lors de la modification.')
+      return null
+    }
   }
 
   async function remove(commentId) {
-    await deleteComment(postId, commentId)
-    setC(p => p.filter(x => (x._id || x.id) !== commentId))
+    try {
+      await deleteComment(postId, commentId)
+      setC(p => p.filter(x => (x._id || x.id) !== commentId))
+    } catch (err) {
+      setE(err?.response?.data?.error?.message || 'Erreur lors de la suppression.')
+    }
   }
 
   async function reply(commentId, content) {
-    const c = await replyToComment(postId, commentId, { content })
-    setC(p => {
-      const idx = p.findIndex(x => x._id === commentId)
-      if (idx === -1) return [...p, c]
-      const newComments = [...p]
-      newComments.splice(idx + 1, 0, c)
-      return newComments
-    })
-    return c
+    if (!content || content.length > 280) {
+      setE('La réponse doit faire entre 1 et 280 caractères.')
+      return null
+    }
+    try {
+      const c = await replyToComment(postId, commentId, { content })
+      setC(p => {
+        const idx = p.findIndex(x => x._id === commentId)
+        if (idx === -1) return [...p, c]
+        const newComments = [...p]
+        newComments.splice(idx + 1, 0, c)
+        return newComments
+      })
+      setE('')
+      return c
+    } catch (err) {
+      setE(err?.response?.data?.error?.message || 'Erreur lors de l\'envoi.')
+      return null
+    }
   }
 
   return { comments, loading, error, addComment, updateComment: update, removeComment: remove, replyComment: reply }

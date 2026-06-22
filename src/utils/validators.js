@@ -17,11 +17,14 @@ export function validateRegisterForm(form) {
     errors.email = "Le courriel n'est pas valide."
   }
 
-  // ⚡ LA SÉCURITÉ : Validation du mot de passe (6 caractères min.)
   if (!form.password) {
     errors.password = "Le mot de passe est requis."
-  } else if (form.password.length < 6) {
-    errors.password = "Le mot de passe doit contenir au moins 6 caractères."
+  } else if (form.password.length < 8) {
+    errors.password = "Le mot de passe doit faire au moins 8 caractères."
+  } else if (!/[A-Z]/.test(form.password)) {
+    errors.password = "Le mot de passe doit contenir au moins une majuscule."
+  } else if (!/[0-9]/.test(form.password)) {
+    errors.password = "Le mot de passe doit contenir au moins un chiffre."
   }
 
   return errors

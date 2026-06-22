@@ -12,9 +12,11 @@ export function usePosts() {
   const load = useCallback(async (p = 1) => {
     setLoading(true); setError('')
     try {
-      const data = await getFeed(p)
-      setPosts(prev => p === 1 ? data.posts : [...prev, ...data.posts])
-      setTP(data.totalPages); setPage(p)
+      const res = await getFeed(p)
+      const items = res.data || []
+      const hasNext = res.pagination?.hasNext || false
+      setPosts(prev => p === 1 ? items : [...prev, ...items])
+      setTP(hasNext ? p + 1 : p); setPage(p)
     } catch { setError('Impossible de charger le fil.') }
     finally { setLoading(false) }
   }, [])

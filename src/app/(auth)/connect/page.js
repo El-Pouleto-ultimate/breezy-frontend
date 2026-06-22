@@ -1,8 +1,24 @@
 'use client'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 
+const TOKEN_KEY = process.env.NEXT_PUBLIC_TOKEN_KEY || 'breezy_token'
+
 export default function ConnectPage() {
+  const router = useRouter()
+  const [checked, setChecked] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem(TOKEN_KEY)) {
+      router.replace('/home')
+    } else {
+      setChecked(true)
+    }
+  }, [router])
+
+  if (!checked) return null
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       {/* Left side: hero graphic for desktop */}

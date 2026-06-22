@@ -29,13 +29,20 @@ export default function ComposePage() {
     }
   }
 
+  const [error, setError] = useState('')
+
   async function publish() {
     if ((!text.trim() && !mediaPreview) || over || loading) return
     setL(true)
+    setError('')
     try {
-      await createPost({ content: text, media: mediaPreview })
+      const payload = { content: text }
+      if (mediaPreview) payload.media_urls = [mediaPreview]
+      await createPost(payload)
       window.dispatchEvent(new Event('postCreated'))
       router.push('/home')
+    } catch (err) {
+      setError(err?.response?.data?.error?.message || 'Erreur lors de la publication.')
     } finally { setL(false) }
   }
 
@@ -80,6 +87,8 @@ export default function ComposePage() {
           )}
         </div>
       </div>
+
+      {error && <p className="text-sm text-red-500 bg-red-50 px-4 py-2">{error}</p>}
 
       {/* Bottom toolbar */}
       <div className="border-t border-breezy-border px-4 py-2 flex items-center gap-4">

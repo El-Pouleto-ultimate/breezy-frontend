@@ -4,7 +4,26 @@ import api from './api'
 
 const real = {
   getUserById: (id) => api.get(`/users/${id}`).then(r => r.data),
-  
+
+  getProfile: (id) => api.get(`/profils/${id}`).then(r => r.data),
+
+  getFullProfile: async (id) => {
+    const [user, profile] = await Promise.allSettled([
+      api.get(`/users/${id}`).then(r => r.data),
+      api.get(`/profils/${id}`).then(r => r.data),
+    ])
+    const u = user.status === 'fulfilled' ? user.value : {}
+    const p = profile.status === 'fulfilled' ? profile.value : {}
+    return {
+      ...u,
+      display_name: p.display_name || u.username,
+      bio: p.bio || '',
+      avatar_url: p.avatar_url || '',
+      banner_url: p.banner_url || '',
+      location: p.location || '',
+    }
+  },
+
   updateProfile: (id, d) => api.put(`/profils/${id}`, d).then(r => r.data),
   
   followUser: (id) => api.post(`/users/${id}/follow`).then(r => r.data),
@@ -15,6 +34,8 @@ const real = {
 }
 
 export const getUserById = (...a) => isMockEnabled() ? mock.getUserById(...a) : real.getUserById(...a)
+export const getProfile = (...a) => isMockEnabled() ? mock.getUserById(...a) : real.getProfile(...a)
+export const getFullProfile = (...a) => isMockEnabled() ? mock.getUserById(...a) : real.getFullProfile(...a)
 export const updateProfile = (...a) => isMockEnabled() ? mock.updateProfile(...a) : real.updateProfile(...a)
 export const followUser = (...a) => isMockEnabled() ? mock.followUser(...a) : real.followUser(...a)
 export const unfollowUser = (...a) => isMockEnabled() ? mock.unfollowUser(...a) : real.unfollowUser(...a)

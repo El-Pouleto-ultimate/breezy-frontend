@@ -14,7 +14,7 @@ export default function FollowersModal({ isOpen, onClose, userId, type }) {
     setLoading(true)
     const fetcher = type === 'followers' ? getFollowers : getFollowing
     fetcher(userId)
-      .then(res => setUsers(res.users || []))
+      .then(res => setUsers(res.data || res.users || []))
       .catch(() => setUsers([]))
       .finally(() => setLoading(false))
   }, [isOpen, userId, type])

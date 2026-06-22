@@ -20,10 +20,14 @@ export default function HomePage() {
   const { posts, loading, error, hasMore, loadMore, prependPost, updatePost, refresh } = usePosts()
 
   async function handlePostCreated(content, media) {
-    const payload = { content }
-    if (media) payload.media = media
-    const p = await createPost(payload)
-    prependPost(p)
+    try {
+      const payload = { content }
+      if (media) payload.media_urls = [media]
+      const p = await createPost(payload)
+      prependPost(p)
+    } catch (err) {
+      alert(err?.response?.data?.error?.message || 'Erreur lors de la publication.')
+    }
   }
 
   return (

@@ -4,46 +4,40 @@ import AppShell from '@/components/layout/AppShell'
 import NotificationItem from '@/components/notifications/NotificationItem'
 import Spinner from '@/components/ui/Spinner'
 import { useAuth } from '@/hooks/useAuth'
-
-// Mock data — replace with API call
-const MOCK = [
-  {
-    _id: '1', type: 'like', read: false, createdAt: new Date(Date.now() - 7200000).toISOString(),
-    actors: [{ _id: 'a1', username: 'Alexandre', avatar: '' }],
-    preview: 'La simplicité est la sophistication suprême. Tellement vrai pour le design...'
-  },
-  {
-    _id: '2', type: 'follow', read: false, createdAt: new Date(Date.now() - 14400000).toISOString(),
-    actors: [{ _id: 'a2', username: 'Marie Dubois', avatar: '' }]
-  },
-  {
-    _id: '3', type: 'mention', read: true, createdAt: new Date(Date.now() - 43200000).toISOString(),
-    actors: [{ _id: 'a3', username: 'Thomas', avatar: '' }],
-    preview: 'Totalement d\'accord avec cette approche. Tu en penses quoi @utilisateur ? Les espaces blancs changent tout.'
-  },
-  {
-    _id: '4', type: 'like', read: true, createdAt: new Date(Date.now() - 86400000).toISOString(),
-    actors: [{ _id: 'a4', username: 'Sophie', avatar: '' }, { _id: 'a5', username: 'Marc', avatar: '' }, { _id: 'a6', username: 'Lena', avatar: '' }],
-    preview: 'C\'est exactement ce qu\'il fallait faire.'
-  },
-]
+import { getNotifications, markAllAsRead } from '@/services/notificationService'
 
 export default function NotificationsPage() {
   const [tab, setTab] = useState('all')
-  const [notifications, setNotifications] = useState(MOCK)
+  const [notifications, setNotifications] = useState([])
+  const [loading, setLoading] = useState(true)
   const { setUnreadCount } = useAuth()
 
   useEffect(() => {
-    // Marquer comme lues et reset le badge
+    setLoading(true)
+    getNotifications()
+      .then(res => {
+        const list = res?.data || (Array.isArray(res) ? res : [])
+        setNotifications(list.map(n => ({
+          _id: n._id,
+          type: n.type,
+          read: n.is_read,
+          createdAt: n.created_at,
+          actors: [{ _id: n.from_user_id, username: n.from_username, avatar: '' }],
+          preview: '',
+          postId: n.post_id,
+        })))
+      })
+      .catch(() => setNotifications([]))
+      .finally(() => setLoading(false))
+
+    markAllAsRead().catch(() => {})
     setUnreadCount(0)
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
   }, [setUnreadCount])
 
   const filtered = tab === 'all' ? notifications : notifications.filter(n => n.type === 'mention')
 
   return (
     <AppShell title="Notifications">
-      {/* Tabs */}
       <div className="flex border-b border-breezy-border sticky top-0 z-30 bg-white">
           {[{ id: 'all', label: 'Toutes' }, { id: 'mention', label: 'Mentions' }].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
@@ -54,9 +48,12 @@ export default function NotificationsPage() {
         ))}
       </div>
 
-      {/* List */}
       <div>
-        {filtered.map(n => <NotificationItem key={n._id} notif={n} />)}
+        {loading && <div className="flex justify-center py-12"><Spinner /></div>}
+        {!loading && filtered.length === 0 && (
+          <p className="text-center text-breezy-muted text-sm py-12">Aucune notification pour l'instant.</p>
+        )}
+        {!loading && filtered.map(n => <NotificationItem key={n._id} notif={n} />)}
       </div>
     </AppShell>
   )

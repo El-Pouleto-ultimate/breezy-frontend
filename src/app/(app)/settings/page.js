@@ -23,7 +23,7 @@ export default function SettingsPage() {
     setLoading(true)
 
     try {
-      await changePassword({ oldPassword, newPassword })
+      await changePassword({ currentPassword: oldPassword, newPassword })
 
       setSuccess(true)
 
@@ -34,7 +34,7 @@ export default function SettingsPage() {
       }, 2000)
 
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue.')
+      setError(err?.response?.data?.error?.message || 'Une erreur est survenue.')
     } finally {
       setLoading(false)
     }
@@ -93,7 +93,7 @@ export default function SettingsPage() {
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-breezy-primary focus:bg-white transition-all text-sm"
-                  placeholder="Minimum 6 caractères"
+                  placeholder="Min. 8 car., 1 majuscule, 1 chiffre"
                 />
               </div>
 

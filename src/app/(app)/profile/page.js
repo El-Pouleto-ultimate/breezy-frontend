@@ -6,7 +6,7 @@ import PostCard from '@/components/feed/PostCard'
 import Spinner from '@/components/ui/Spinner'
 import ComposeFab from '@/components/feed/ComposeFab'
 import { useAuth } from '@/hooks/useAuth' // ou le bon chemin vers ton contexte
-import { getUserById } from '@/services/userService'
+import { getFullProfile } from '@/services/userService'
 import { getUserPosts, getUserReplies, getUserMedia, getUserLikes } from '@/services/postService'
 
 export default function ProfilePage() {
@@ -22,16 +22,16 @@ export default function ProfilePage() {
     const uid = user.id || user._id
     
     try {
-      const p = await getUserById(uid)
+      const p = await getFullProfile(uid)
       setProfile(p)
       
-      let postsData = { posts: [] }
+      let postsData = { data: [] }
       if (activeTab === 'Posts') postsData = await getUserPosts(uid)
       else if (activeTab === 'Replies') postsData = await getUserReplies(uid)
       else if (activeTab === 'Media') postsData = await getUserMedia(uid)
       else if (activeTab === 'Likes') postsData = await getUserLikes(uid)
-      
-      setPosts(postsData.posts || [])
+
+      setPosts(postsData.data || postsData.posts || [])
     } catch (err) {
       console.error("Erreur chargement profil:", err)
       // Fallback
@@ -61,15 +61,14 @@ export default function ProfilePage() {
   const displayProfile = {
     id: profile?.id || profile?._id || user?.id || user?._id,
     username: profile?.username || user?.username || 'Utilisateur',
-    avatar: profile?.avatar || user?.avatar,
-    bio: profile?.bio || user?.bio || '',
-    location: profile?.location || user?.location || '',
-    createdAt: profile?.createdAt || user?.createdAt || '2022-04-01T00:00:00Z',
-    banner: profile?.banner || user?.banner || '',
-    followedByMe: false, // C'est ton profil, donc tu ne te suis pas toi-même
-    // On vérifie d'abord si l'API envoie "followingCount", sinon on compte la taille du tableau "following"
-    followingCount: profile?.followingCount ?? profile?.following?.length ?? user?.followingCount ?? 0,
-    followersCount: profile?.followersCount ?? profile?.followers?.length ?? user?.followersCount ?? 0,
+    avatar: profile?.avatar_url || profile?.avatar,
+    bio: profile?.bio || '',
+    location: profile?.location || '',
+    createdAt: profile?.created_at || profile?.createdAt || '',
+    banner: profile?.banner_url || profile?.banner || '',
+    followedByMe: false,
+    followingCount: profile?.following_count ?? profile?.followingCount ?? 0,
+    followersCount: profile?.followers_count ?? profile?.followersCount ?? 0,
   }
 
   const myId = user?.id || user?._id

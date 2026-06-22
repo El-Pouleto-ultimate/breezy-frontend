@@ -1,6 +1,6 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
-import { getMe } from '@/services/authService'
+import { getMe, logout as logoutApi } from '@/services/authService'
 import { getNotifications } from '@/services/notificationService'
 import { getUnreadMessagesCount } from '@/services/messageService'
 
@@ -30,9 +30,12 @@ export function AuthProvider({ children }) {
     }
     try {
       const data = await getNotifications()
-      const list = Array.isArray(data) ? data : data?.data || []
-      const count = list.filter(n => !n.read).length
-      setUnreadCount(count)
+      if (data?.unread_count !== undefined) {
+        setUnreadCount(data.unread_count)
+      } else {
+        const list = Array.isArray(data) ? data : data?.data || []
+        setUnreadCount(list.filter(n => !n.is_read && !n.read).length)
+      }
       
       const msgCount = await getUnreadMessagesCount()
       setUnreadMsgCount(msgCount)
@@ -46,7 +49,8 @@ export function AuthProvider({ children }) {
     if (saved) {
       getMe()
         .then((userData) => {
-          if (userData) setUser(userData)
+          if (userData?.user) setUser(userData.user)
+          else if (userData) setUser(userData)
         })
         .catch((err) => {
           console.error("Erreur récupération utilisateur:", err)
@@ -73,6 +77,7 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    logoutApi().catch(() => {})
     setUser(null)
     setToken(null)
     localStorage.removeItem(TOKEN_KEY)

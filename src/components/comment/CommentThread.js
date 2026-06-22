@@ -47,13 +47,13 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
   }
 
   return (
-    <div className={`flex gap-3 px-4 py-3 border-b border-breezy-border group relative ${c.parentId ? 'ml-8 bg-gray-50/50' : ''}`}>
-      <Avatar src={c.author?.avatar} username={c.author?.username || c.username} size="sm" />
+    <div className={`flex gap-3 px-4 py-3 border-b border-breezy-border group relative ${c.parent_comment_id || c.parentId ? 'ml-8 bg-gray-50/50' : ''}`}>
+      <Avatar src={c.avatar_url} username={c.username || c.author?.username || '?'} size="sm" />
       <div className="flex-1">
         <div className="flex items-baseline justify-between gap-1.5">
           <div>
-            <span className="font-bold text-sm text-breezy-dark mr-1.5">{c.author?.username || c.username}</span>
-            <span className="text-breezy-muted text-xs">· {timeAgo(c.createdAt)}</span>
+            <span className="font-bold text-sm text-breezy-dark mr-1.5">{c.username || c.author?.username}</span>
+            <span className="text-breezy-muted text-xs">· {timeAgo(c.created_at || c.createdAt)}</span>
           </div>
           <div className="flex items-center gap-2">
             {!isEditing && (
@@ -108,7 +108,7 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
               <textarea
                 value={replyContent}
                 onChange={e => setReplyContent(e.target.value)}
-                placeholder={`Répondre à ${c.author?.username || c.username}...`}
+                placeholder={`Répondre à ${c.username || c.author?.username}...`}
                 className="w-full p-2 border border-breezy-border rounded-lg focus:outline-none focus:border-breezy-primary resize-none text-xs text-breezy-dark"
                 rows="2"
                 autoFocus
@@ -131,7 +131,7 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
 
 export default function CommentThread({ post, isOpen, onClose, onCommentAdded, onCommentRemoved, onCommentsLoaded }) {
   const { user } = useAuth()
-  const { comments, loading, addComment, updateComment, removeComment, replyComment } = useComments(isOpen ? post?._id : null)
+  const { comments, loading, error: commentError, addComment, updateComment, removeComment, replyComment } = useComments(isOpen ? post?._id : null)
   const [reply, setReply] = useState('')
   const [sending, setSending] = useState(false)
   const sheetRef = useRef(null)
@@ -156,6 +156,8 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
       const c = await addComment(reply)
       setReply('')
       onCommentAdded?.(c)
+    } catch (err) {
+      console.error('Erreur commentaire:', err)
     } finally { setSending(false) }
   }
 
@@ -182,11 +184,11 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
         </div>
 
         <div className="flex gap-3 px-4 py-3 border-b border-breezy-border">
-          <Avatar src={post?.author?.avatar} username={post?.author?.username} size="md" />
+          <Avatar src={post?.avatar_url} username={post?.username} size="md" />
           <div className="flex-1">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="font-bold text-sm text-breezy-dark">{post?.author?.username}</span>
-              <span className="text-breezy-muted text-sm">· {timeAgo(post?.createdAt)}</span>
+              <span className="font-bold text-sm text-breezy-dark">{post?.username}</span>
+              <span className="text-breezy-muted text-sm">· {timeAgo(post?.created_at)}</span>
             </div>
             <p className="text-sm text-breezy-dark leading-relaxed">{post?.content}</p>
           </div>
@@ -202,18 +204,23 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
           ))}
         </div>
 
-        <form onSubmit={handleSend} className="flex items-center gap-3 px-4 py-3 border-t border-breezy-border bg-white">
-          <Avatar src={user?.avatar} username={user?.username} size="sm" />
-          <input
-            value={reply}
-            onChange={e => setReply(e.target.value)}
-            placeholder="Votre réponse..."
-            className="flex-1 bg-breezy-bg rounded-full px-4 py-2 text-sm outline-none text-breezy-dark placeholder:text-breezy-muted"
-            disabled={sending}
-          />
-          <button type="submit" disabled={!reply.trim() || sending} className="text-breezy-primary disabled:opacity-30 transition-opacity font-semibold text-sm">
-            {sending ? '...' : 'Publier'}
-          </button>
+        {commentError && <p className="text-xs text-red-500 px-4 py-1.5 bg-red-50 border-t border-red-100">{commentError}</p>}
+        <form onSubmit={handleSend} className="border-t border-breezy-border bg-white">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <Avatar src={user?.avatar} username={user?.username} size="sm" />
+            <input
+              value={reply}
+              onChange={e => setReply(e.target.value)}
+              placeholder="Votre réponse..."
+              maxLength={280}
+              className="flex-1 bg-breezy-bg rounded-full px-4 py-2 text-sm outline-none text-breezy-dark placeholder:text-breezy-muted"
+              disabled={sending}
+            />
+            <button type="submit" disabled={!reply.trim() || sending || reply.length > 280} className="text-breezy-primary disabled:opacity-30 transition-opacity font-semibold text-sm">
+              {sending ? '...' : 'Publier'}
+            </button>
+          </div>
+          {reply.length > 250 && <p className="text-xs px-4 pb-2 text-right text-breezy-muted">{reply.length}/280</p>}
         </form>
       </div>
     </>

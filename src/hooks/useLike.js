@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react'
-import { toggleLike } from '@/services/postService'
+import { likePost, unlikePost } from '@/services/postService'
 
 export function useLike(post, onUpdate) {
   const [liked, setLiked]   = useState(post?.likedByMe || false)
-  const [count, setCount]   = useState(post?.likesCount || 0)
+  const [count, setCount]   = useState(post?.likes_count || 0)
   const [loading, setLoad]  = useState(false)
 
   async function handleLike() {
@@ -13,9 +13,10 @@ export function useLike(post, onUpdate) {
     setLiked(!was); setCount(was ? prev-1 : prev+1)
     setLoad(true)
     try {
-      const d = await toggleLike(post._id)
-      setLiked(d.liked); setCount(d.likesCount)
-      onUpdate?.({ ...post, likedByMe: d.liked, likesCount: d.likesCount })
+      const d = was ? await unlikePost(post._id) : await likePost(post._id)
+      const newCount = d.likes_count
+      setLiked(!was); setCount(newCount)
+      onUpdate?.({ ...post, likedByMe: !was, likes_count: newCount })
     } catch { setLiked(was); setCount(prev) }
     finally { setLoad(false) }
   }
