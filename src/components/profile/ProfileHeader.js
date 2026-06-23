@@ -11,9 +11,9 @@ import FollowersModal from './FollowersModal'
 
 const BIO_LIMIT = 160
 
-export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onTabChange }) {
+export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onTabChange, onProfileUpdate }) {
   const { user } = useAuth()
-  const { following, toggle, loading } = useFollow(profile?.id, profile?.followedByMe)
+  const { following, toggle, loading } = useFollow(profile?.id, profile?.followedByMe, onProfileUpdate)
   const [modalOpen, setModalOpen] = useState(false)
   const [modalType, setModalType] = useState('followers')
   const [bioExpanded, setBioExpanded] = useState(false)
