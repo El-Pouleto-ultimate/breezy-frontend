@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { MapPin, Calendar } from 'lucide-react'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 import { useFollow } from '@/hooks/useFollow'
@@ -9,9 +10,6 @@ import { formatJoined } from '@/utils/formatDate'
 import FollowersModal from './FollowersModal'
 
 const BIO_LIMIT = 160
-
-function LocationIcon() { return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-breezy-muted"><path d="M12 7c-1.933 0-3.5 1.567-3.5 3.5S10.067 14 12 14s3.5-1.567 3.5-3.5S13.933 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 8.5 12 8.5s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-3.866 0-7 3.134-7 7 0 5.25 6.375 11.645 6.648 11.915.182.178.416.267.652.267.236 0 .47-.089.652-.267C13.625 20.645 20 14.25 20 9c0-3.866-3.134-7-8-7zm0 17.79C10.12 17.75 7 13.76 7 9c0-2.757 2.243-5 5-5s5 2.243 5 5c0 4.76-3.12 8.75-5 9.79z" /></svg> }
-function CalIcon() { return <svg viewBox="0 0 24 24" className="w-4 h-4 fill-breezy-muted"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm0-13H5V5h14v1zM7 10h5v5H7z" /></svg> }
 
 export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onTabChange }) {
   const { user } = useAuth()
@@ -81,12 +79,12 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
         <div className="flex items-center gap-4 mt-2 flex-wrap">
           {profile.location && (
             <span className="flex items-center gap-1 text-sm text-breezy-muted">
-              <LocationIcon />{profile.location}
+              <MapPin size={16} className="text-breezy-muted" />{profile.location}
             </span>
           )}
           {profile.createdAt && (
             <span className="flex items-center gap-1 text-sm text-breezy-muted">
-              <CalIcon />Rejoint {formatJoined(profile.createdAt)}
+              <Calendar size={16} className="text-breezy-muted" />Rejoint {formatJoined(profile.createdAt)}
             </span>
           )}
         </div>

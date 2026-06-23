@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { timeAgo } from '@/utils/formatDate'
 import { Suspense } from 'react'
 import api from '@/services/api'
+import { X } from 'lucide-react'
 
 function ReplyForm() {
   const { user } = useAuth()
@@ -44,7 +45,7 @@ function ReplyForm() {
     <div className="min-h-screen bg-white max-w-lg mx-auto flex flex-col">
       <div className="flex items-center justify-between px-4 h-14 border-b border-breezy-border">
         <button onClick={() => router.back()} className="text-breezy-dark">
-          <svg viewBox="0 0 24 24" className="w-6 h-6 fill-breezy-dark"><path d="M18.36 19.78L12 13.41l-6.36 6.37-1.42-1.42L10.59 12 4.22 5.64l1.42-1.42L12 10.59l6.36-6.36 1.41 1.41L13.41 12l6.36 6.36z"/></svg>
+          <X size={24} />
         </button>
         <div />
         <Button onClick={publish} loading={loading} disabled={!text.trim()}

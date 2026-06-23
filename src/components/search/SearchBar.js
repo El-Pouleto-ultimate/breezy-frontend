@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { Search, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Avatar from '@/components/ui/Avatar'
 
@@ -69,9 +70,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
     <div className="relative px-4 py-2" ref={wrapperRef}>
       <form onSubmit={handleSubmit}>
         <div className={`flex items-center gap-3 bg-breezy-bg rounded-full px-4 py-2.5 border ${focused ? 'border-breezy-primary bg-white' : 'border-transparent'}`}>
-          <svg viewBox="0 0 24 24" className={`w-4 h-4 flex-shrink-0 ${focused ? 'fill-breezy-primary' : 'fill-breezy-muted'}`}>
-            <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z" />
-          </svg>
+          <Search size={18} className={`flex-shrink-0 ${focused ? 'text-breezy-primary' : 'text-breezy-muted'}`} />
           <input
             value={q}
             onChange={handleInputChange} // Changement appliqué ici
@@ -82,7 +81,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
           />
           {q && (
             <button type="button" onClick={() => setQ('')} className="p-1 rounded-full bg-breezy-primary text-white flex-shrink-0">
-              <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current"><path d="M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z" /></svg>
+              <X size={16} />
             </button>
           )}
         </div>
@@ -110,7 +109,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
               >
                 <div className="flex items-center gap-3 overflow-hidden">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center bg-breezy-bg flex-shrink-0">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-breezy-muted"><path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z" /></svg>
+                    <Search size={20} className="text-breezy-muted" />
                   </div>
                   <span className="text-sm font-medium text-breezy-dark truncate">{term}</span>
                 </div>
@@ -119,7 +118,7 @@ export default function SearchBar({ placeholder = 'Rechercher sur Breezy', autoF
                   onMouseDown={(e) => removeRecent(term, e)}
                   className="p-2 text-breezy-primary hover:bg-blue-50 rounded-full"
                 >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z" /></svg>
+                  <X size={16} />
                 </button>
               </li>
             ))}

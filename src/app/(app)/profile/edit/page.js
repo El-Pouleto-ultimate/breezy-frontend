@@ -6,6 +6,7 @@ import { updateProfile } from '@/services/userService'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import { X, Camera } from 'lucide-react'
 
 const BIO_MAX = 160
 
@@ -75,9 +76,7 @@ export default function EditProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 h-14 border-b border-breezy-border">
         <button onClick={() => router.back()} className="text-breezy-dark font-medium">
-          <svg viewBox="0 0 24 24" className="w-6 h-6 fill-breezy-dark">
-            <path d="M18.36 19.78L12 13.41l-6.36 6.37-1.42-1.42L10.59 12 4.22 5.64l1.42-1.42L12 10.59l6.36-6.36 1.41 1.41L13.41 12l6.36 6.36z" />
-          </svg>
+          <X size={24} />
         </button>
         <span className="font-bold text-lg text-breezy-dark">Modifier le profil</span>
         <Button
@@ -101,9 +100,7 @@ export default function EditProfilePage() {
         {bannerPreview && <img src={bannerPreview} className="w-full h-full object-cover" alt="Banner" />}
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="bg-black/50 rounded-full p-2 backdrop-blur-sm">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white">
-              <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h2.697l2-2z" />
-            </svg>
+            <Camera size={18} />
           </div>
         </div>
       </div>
@@ -114,9 +111,7 @@ export default function EditProfilePage() {
           <Avatar src={avatarPreview} username={user?.username || '?'} size="xl" className="ring-4 ring-white" />
           <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="bg-black/50 rounded-full p-1.5 backdrop-blur-sm">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white">
-                <path d="M9.697 3H11v2h-.697l-3 2H5c-.276 0-.5.224-.5.5v11c0 .276.224.5.5.5h14c.276 0 .5-.224.5-.5V10h2v8.5c0 1.381-1.119 2.5-2.5 2.5H5c-1.381 0-2.5-1.119-2.5-2.5v-11C2.5 6.119 3.619 5 5 5h2.697l2-2z" />
-              </svg>
+              <Camera size={18} />
             </div>
           </div>
         </div>

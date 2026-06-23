@@ -5,6 +5,7 @@ import Avatar from '@/components/ui/Avatar'
 import Spinner from '@/components/ui/Spinner'
 import { timeAgo } from '@/utils/formatDate'
 import { useAuth } from '@/hooks/useAuth'
+import { EllipsisVertical, X } from 'lucide-react'
 
 function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -64,7 +65,7 @@ function CommentItem({ c, user, onUpdate, onRemove, onReply }) {
             {isAuthor && !isEditing && (
               <div className="relative">
                 <button onClick={() => setShowMenu(!showMenu)} className="p-1 rounded-full text-breezy-muted hover:bg-breezy-hover transition-colors">
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" /></svg>
+                  <EllipsisVertical size={18} />
                 </button>
                 {showMenu && (
                   <>
@@ -179,7 +180,7 @@ export default function CommentThread({ post, isOpen, onClose, onCommentAdded, o
         <div className="flex items-center justify-between px-4 py-2 border-b border-breezy-border">
           <span className="font-bold text-breezy-dark">Réponses ({comments.length})</span>
           <button onClick={onClose} className="text-breezy-muted hover:text-breezy-dark p-1 rounded-full hover:bg-breezy-hover">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z" /></svg>
+            <X size={24} />
           </button>
         </div>
 

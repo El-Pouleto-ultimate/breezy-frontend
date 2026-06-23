@@ -4,6 +4,7 @@ import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
 import { getFollowers, getFollowing } from '@/services/userService'
+import { X } from 'lucide-react'
 
 export default function FollowersModal({ isOpen, onClose, userId, type }) {
   const [users, setUsers] = useState([])
@@ -30,7 +31,7 @@ export default function FollowersModal({ isOpen, onClose, userId, type }) {
             {type === 'followers' ? 'Abonnés' : 'Abonnements'}
           </h2>
           <button onClick={onClose} className="text-breezy-muted hover:text-breezy-dark">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z" /></svg>
+            <X size={24} />
           </button>
         </div>
 
