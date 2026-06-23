@@ -7,6 +7,25 @@ import CommentThread from '@/components/comment/CommentThread'
 import { timeAgo } from '@/utils/formatDate'
 import { updatePost } from '@/services/postService' // ⚡ Import du service de mise à jour
 
+// Helper to render @username mentions as clickable links
+function renderContent(text) {
+  if (!text) return text
+  const parts = text.split(/(@[a-zA-Z0-9_]+)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('@')) {
+      const username = part.substring(1)
+      return (
+        <Link key={i} href={`/search?q=@${username}`}
+          className="text-breezy-primary hover:underline"
+          onClick={(e) => e.stopPropagation()}>
+          {part}
+        </Link>
+      )
+    }
+    return <span key={i}>{part}</span>
+  })
+}
+
 export default function PostCard({ post, onUpdate, hideActions = false }) {
   const [showComments, setShowComments] = useState(false)
   
@@ -23,7 +42,7 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
     }
     setIsSaving(true)
     try {
-      const updated = await updatePost(post._id, { content: editText })
+      const updated = await updatePost(post._id, { content: editText, media_urls: post.media_urls })
       onUpdate?.(updated) // Met à jour le post dans le feed parent
       setIsEditing(false) // Quitte le mode édition
     } catch (err) {
@@ -80,7 +99,7 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
             </div>
           ) : (
             <p className="text-sm text-breezy-dark mt-0.5 leading-[1.5] whitespace-pre-wrap break-words">
-              {post.content}
+              {renderContent(post.content)}
             </p>
           )}
 

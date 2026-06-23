@@ -63,7 +63,7 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
         {/* Bio avec limite 160 caractères */}
         {bio && (
           <div className="mt-2">
-            <p className="text-sm text-breezy-dark whitespace-pre-wrap leading-relaxed">
+            <p className="text-sm text-breezy-dark whitespace-pre-wrap break-words overflow-hidden leading-relaxed">
               {displayedBio}
             </p>
             {isLongBio && (

@@ -148,6 +148,11 @@ export async function toggleRepost(id) {
   return { reposted: post.repostedByMe, repostsCount: post.repostsCount }
 }
 
+export async function uploadMedia(file) {
+  await delay(200)
+  return `/api/uploads/mock_${Date.now()}.jpg`
+}
+
 export async function searchPosts(q, page = 1) {
   await delay(400)
   const lower = q.toLowerCase()

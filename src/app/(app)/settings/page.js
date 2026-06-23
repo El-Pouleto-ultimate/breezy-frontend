@@ -59,7 +59,7 @@ export default function SettingsPage() {
 
           {success ? (
             <div className="bg-green-50 text-green-600 p-4 rounded-xl border border-green-200 text-sm font-medium animate-pulse">
-              ✨ Mot de passe modifié avec succès ! Déconnexion de sécurité en cours...
+              Mot de passe modifié avec succès ! Déconnexion de sécurité en cours...
             </div>
           ) : (
             <form onSubmit={handlePasswordSubmit} className="space-y-4">

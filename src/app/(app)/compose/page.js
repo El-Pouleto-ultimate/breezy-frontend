@@ -2,7 +2,8 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { createPost } from '@/services/postService'
+import useMentions from '@/hooks/useMentions'
+import { createPost, uploadMedia } from '@/services/postService'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 
@@ -14,18 +15,58 @@ export default function ComposePage() {
   const [text, setT] = useState('')
   const [mediaPreview, setMediaPreview] = useState(null)
   const [loading, setL] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef(null)
+  const textareaRef = useRef(null)
+
+  const {
+    suggestions,
+    selectedIndex,
+    setSelectedIndex,
+    showDropdown,
+    onKeyDown,
+    onTextChange,
+    selectMention,
+  } = useMentions(text, setT)
+
+  function handleChange(e) {
+    setT(e.target.value)
+    onTextChange(e)
+  }
 
   const left = MAX - text.length
   const over = left < 0
   const pct = Math.min(100, (text.length / MAX) * 100)
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files[0]
+    setError('')
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => setMediaPreview(reader.result)
-      reader.readAsDataURL(file)
+      if (!file.type.startsWith('image/')) {
+        setError("Format non supporté. Seules les images sont autorisées.")
+        setMediaPreview(null)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+        return
+      }
+
+      setUploading(true)
+      try {
+        const url = await uploadMedia(file)
+        setMediaPreview(url)
+      } catch (err) {
+        const msg = err?.response?.data?.error?.message || err?.message || ''
+        if (err?.response?.status === 413 || msg.includes('volumineuse') || msg.includes('large')) {
+          setError('Image trop volumineuse (max 5 Mo).')
+        } else if (msg.includes('Format') || msg.includes('autorisé')) {
+          setError('Format non supporté. Seules les images sont autorisées.')
+        } else {
+          setError("Erreur lors de l'upload de l'image.")
+        }
+        setMediaPreview(null)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+      } finally {
+        setUploading(false)
+      }
     }
   }
 
@@ -56,7 +97,7 @@ export default function ComposePage() {
           </svg>
         </button>
         <span className="text-breezy-primary text-sm font-semibold cursor-pointer">Brouillons</span>
-        <Button onClick={publish} loading={loading} disabled={(!text.trim() && !mediaPreview) || over}
+        <Button onClick={publish} loading={loading || uploading} disabled={(!text.trim() && !mediaPreview) || over || uploading}
           className="bg-breezy-dark text-white text-sm font-bold px-5 py-1.5 rounded-full hover:bg-black">
           Publier
         </Button>
@@ -66,13 +107,53 @@ export default function ComposePage() {
       <div className="flex-1 flex gap-3 p-4">
         <Avatar src={user?.avatar} username={user?.username || '?'} size="md" />
         <div className="flex-1">
-          <textarea
-            value={text}
-            onChange={e => setT(e.target.value)}
-            placeholder="Quoi de neuf ?"
-            autoFocus
-            className="w-full text-xl text-breezy-dark placeholder:text-breezy-muted bg-transparent outline-none resize-none min-h-32 leading-relaxed"
-          />
+          <div className="relative">
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={handleChange}
+              onKeyDown={onKeyDown}
+              placeholder="Quoi de neuf ?"
+              autoFocus
+              className="w-full text-xl text-breezy-dark placeholder:text-breezy-muted bg-transparent outline-none resize-none min-h-32 leading-relaxed"
+            />
+
+            {/* Dropdown d'autocomplétion @mentions */}
+            {showDropdown && suggestions.length > 0 && (
+              <div className="w-64 bg-white border border-breezy-border rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto -mt-1 mb-2">
+                {suggestions.map((u, i) => (
+                  <button
+                    key={u.id || u._id}
+                    type="button"
+                    onClick={() => selectMention(u)}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                      i === selectedIndex
+                        ? 'bg-breezy-primary/10 text-breezy-primary'
+                        : 'hover:bg-breezy-hover text-breezy-dark'
+                    }`}
+                    onMouseEnter={() => setSelectedIndex(i)}
+                  >
+                    <Avatar src={u.avatar_url || u.avatar} username={u.username} size="sm" />
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-sm font-semibold">{u.username}</span>
+                      {u.display_name && (
+                        <span className="text-xs text-breezy-muted">{u.display_name}</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Upload en cours */}
+          {uploading && (
+            <div className="relative mt-2 max-w-xs">
+              <div className="rounded-2xl max-h-48 min-h-[100px] bg-gray-100 flex items-center justify-center">
+                <span className="text-breezy-muted text-sm">Upload en cours...</span>
+              </div>
+            </div>
+          )}
+
           {/* Aperçu image */}
           {mediaPreview && (
             <div className="relative mt-2 max-w-xs">

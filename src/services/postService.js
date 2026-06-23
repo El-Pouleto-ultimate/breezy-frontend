@@ -16,6 +16,13 @@ const real = {
   unlikePost: (id) => api.delete(`/posts/${id}/like`).then(r => r.data),
   toggleRepost: (id) => api.post(`/posts/${id}/repost`).then(r => r.data),
   searchPosts: (q, p = 1) => api.get(`/posts/search?q=${encodeURIComponent(q)}&page=${p}`).then(r => r.data),
+  uploadMedia: (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/upload', formData, {
+      headers: { 'Content-Type': undefined }
+    }).then(r => r.data.url || r.data?.url)
+  },
 }
 
 export const getFeed = (...a) => isMockEnabled() ? mock.getFeed(...a) : real.getFeed(...a)
@@ -31,3 +38,4 @@ export const likePost = (...a) => isMockEnabled() ? mock.toggleLike(...a) : real
 export const unlikePost = (...a) => isMockEnabled() ? mock.toggleLike(...a) : real.unlikePost(...a)
 export const toggleRepost = (...a) => isMockEnabled() ? mock.toggleRepost(...a) : real.toggleRepost(...a)
 export const searchPosts = (...a) => isMockEnabled() ? mock.searchPosts(...a) : real.searchPosts(...a)
+export const uploadMedia = (...a) => isMockEnabled() ? mock.uploadMedia(...a) : real.uploadMedia(...a)

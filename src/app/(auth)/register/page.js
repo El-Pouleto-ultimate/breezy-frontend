@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Input from '@/components/ui/Input'
@@ -15,6 +15,12 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const { setUser, saveToken } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    if (localStorage.getItem('breezy_token')) {
+      router.replace('/home')
+    }
+  }, [router])
 
   function upd(f) {
     //On passe le nom du champ 
