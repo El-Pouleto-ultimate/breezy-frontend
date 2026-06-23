@@ -74,6 +74,8 @@ export function AuthProvider({ children }) {
   function saveToken(t) {
     setToken(t)
     localStorage.setItem(TOKEN_KEY, t)
+    // Cookie simple pour le middleware serveur (protection côté Next.js)
+    document.cookie = `breezy_auth=1; path=/; max-age=86400; SameSite=Lax`
   }
 
   function logout() {
@@ -81,6 +83,8 @@ export function AuthProvider({ children }) {
     setUser(null)
     setToken(null)
     localStorage.removeItem(TOKEN_KEY)
+    // Supprimer le cookie d'auth
+    document.cookie = 'breezy_auth=; path=/; max-age=0'
   }
 
   return (

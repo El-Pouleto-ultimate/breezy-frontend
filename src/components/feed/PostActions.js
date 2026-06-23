@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useLike } from '@/hooks/useLike'
+import { showToast } from '@/utils/toast'
 import { useAuth } from '@/hooks/useAuth'
 import { toggleRepost, deletePost } from '@/services/postService'
 import { Heart, MessageCircle, Repeat2, Ellipsis } from 'lucide-react'
@@ -40,7 +41,7 @@ export default function PostActions({ post, onComment, onUpdate, onEdit }) {
       await deletePost(post._id)
       onUpdate?.({ ...post, deleted: true })
     } catch (err) {
-      alert("Erreur lors de la suppression")
+      showToast("Erreur lors de la suppression")
     }
   }
 

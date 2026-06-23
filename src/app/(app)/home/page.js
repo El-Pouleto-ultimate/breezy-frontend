@@ -5,6 +5,7 @@ import ComposeFab from '@/components/feed/ComposeFab'
 import PostForm from '@/components/feed/PostForm'
 import { usePosts } from '@/hooks/usePosts'
 import { createPost } from '@/services/postService'
+import { showToast } from '@/utils/toast'
 import { RotateCw } from 'lucide-react'
 
 function RefreshButton({ onClick }) {
@@ -25,7 +26,7 @@ export default function HomePage() {
       const p = await createPost(payload)
       prependPost(p)
     } catch (err) {
-      alert(err?.response?.data?.error?.message || 'Erreur lors de la publication.')
+      showToast(err?.response?.data?.error?.message || 'Erreur lors de la publication.')
     }
   }
 

@@ -6,6 +6,7 @@ import PostActions from './PostActions'
 import CommentThread from '@/components/comment/CommentThread'
 import { timeAgo } from '@/utils/formatDate'
 import { updatePost } from '@/services/postService' // ⚡ Import du service de mise à jour
+import { showToast } from '@/utils/toast'
 
 // Helper to render @username mentions as clickable links
 function renderContent(text) {
@@ -46,7 +47,7 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
       onUpdate?.(updated) // Met à jour le post dans le feed parent
       setIsEditing(false) // Quitte le mode édition
     } catch (err) {
-      alert("Erreur lors de la modification")
+      showToast("Erreur lors de la modification")
     } finally {
       setIsSaving(false)
     }
