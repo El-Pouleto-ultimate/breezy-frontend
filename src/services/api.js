@@ -33,7 +33,12 @@ api.interceptors.response.use(
     const originalRequest = err.config
 
     if (err.response?.status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
-      if (originalRequest.url?.includes('/auth/refresh') || originalRequest.url?.includes('/auth/login')) {
+      // /auth/login qui renvoie 401 = mauvais credentials → laisser le composant gérer l'erreur
+      if (originalRequest.url?.includes('/auth/login')) {
+        return Promise.reject(err)
+      }
+      // /auth/refresh qui échoue → forcer la reconnexion
+      if (originalRequest.url?.includes('/auth/refresh')) {
         localStorage.removeItem(TOKEN_KEY)
         window.location.href = '/signin'
         return Promise.reject(err)

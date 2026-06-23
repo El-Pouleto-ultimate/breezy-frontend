@@ -28,10 +28,15 @@ export default function SignInPage() {
   }, [router])
 
   async function handleSubmit(e) {
-    e.preventDefault() 
+    e.preventDefault()
     setError('')
     setInfoMessage('')
     if (!email.trim() || !password.trim()) { setError('Tous les champs sont requis.'); return }
+
+    // Supprimer tout vieux token pour éviter que l'interceptor axios
+    // n'envoie un header Authorization expiré avec la requête de login
+    localStorage.removeItem('breezy_token')
+
     setLoading(true)
     try {
       const data = await login({ email, password })
@@ -39,7 +44,15 @@ export default function SignInPage() {
       setUser(data.user)
       router.replace('/home')
     } catch (err) {
-      setError(err?.response?.data?.error?.message || 'Identifiants incorrects.')
+      const msg = err?.response?.data?.error?.message || ''
+      const code = err?.response?.data?.error?.code || ''
+      if (err?.response?.status === 429) {
+        setError('Trop de tentatives. Réessayez dans quelques minutes.')
+      } else if (code === 'ACCOUNT_BANNED') {
+        setError('Ce compte a été banni. Contactez un administrateur.')
+      } else {
+        setError(msg || 'Identifiants incorrects.')
+      }
     } finally { setLoading(false) }
   }
 

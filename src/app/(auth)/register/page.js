@@ -66,8 +66,17 @@ export default function RegisterPage() {
       router.replace('/home')
     } catch (err) {
       const errData = err?.response?.data?.error
-      if (errData?.details?.length) {
+      const status = err?.response?.status
+
+      if (status === 429) {
+        setApiErr('Trop de tentatives. Réessayez dans quelques minutes.')
+      } else if (status === 409) {
+        setApiErr(errData?.message || 'Ce nom d\'utilisateur ou cet email est déjà utilisé.')
+      } else if (status === 400 && errData?.details?.length) {
+        // Messages de validation : on affiche chaque règle non respectée
         setApiErr(errData.details.map(d => d.message).join(' '))
+      } else if (status === 400) {
+        setApiErr(errData?.message || 'Données invalides. Vérifiez vos informations.')
       } else {
         setApiErr(errData?.message || 'Erreur lors de la création du compte.')
       }
