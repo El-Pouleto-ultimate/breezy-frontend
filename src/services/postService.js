@@ -9,6 +9,7 @@ const real = {
   getUserMedia: (uid, p = 1) => api.get(`/posts/user/${uid}/media?page=${p}&limit=10`).then(r => r.data),
   getUserLikes: (uid, p = 1) => api.get(`/posts/user/${uid}/likes?page=${p}&limit=10`).then(r => r.data),
   getUserReposts: (uid, p = 1) => api.get(`/posts/user/${uid}/reposts?page=${p}&limit=10`).then(r => r.data),
+  getPostById: (id) => api.get(`/posts/${id}`).then(r => r.data),
   createPost: (d) => api.post('/posts', d).then(r => r.data),
   updatePost: (id, d) => api.put(`/posts/${id}`, d).then(r => r.data),
   deletePost: (id) => api.delete(`/posts/${id}`),
@@ -31,6 +32,7 @@ export const getUserReplies = (...a) => isMockEnabled() ? mock.getUserReplies(..
 export const getUserMedia = (...a) => isMockEnabled() ? mock.getUserMedia(...a) : real.getUserMedia(...a)
 export const getUserLikes = (...a) => isMockEnabled() ? mock.getUserLikes(...a) : real.getUserLikes(...a)
 export const getUserReposts = (...a) => isMockEnabled() ? mock.getUserReposts(...a) : real.getUserReposts(...a)
+export const getPostById = (...a) => real.getPostById(...a)
 export const createPost = (...a) => isMockEnabled() ? mock.createPost(...a) : real.createPost(...a)
 export const updatePost = (...a) => isMockEnabled() ? mock.updatePost(...a) : real.updatePost(...a)
 export const deletePost = (...a) => isMockEnabled() ? mock.deletePost(...a) : real.deletePost(...a)
