@@ -4,7 +4,7 @@ import PostList from '@/components/feed/PostList'
 import ComposeFab from '@/components/feed/ComposeFab'
 import PostForm from '@/components/feed/PostForm'
 import { usePosts } from '@/hooks/usePosts'
-import { createPost } from '@/services/postService'
+import { createPost, getPostById } from '@/services/postService'
 import { showToast } from '@/utils/toast'
 import { RotateCw } from 'lucide-react'
 
@@ -25,6 +25,14 @@ export default function HomePage() {
       if (media) payload.media_urls = [media]
       const p = await createPost(payload)
       prependPost(p)
+      if (content.toLowerCase().includes('@breezy_ai')) {
+        setTimeout(async () => {
+          try {
+            const updated = await getPostById(p._id)
+            if (updated) updatePost(updated)
+          } catch {}
+        }, 5000)
+      }
     } catch (err) {
       showToast(err?.response?.data?.error?.message || 'Erreur lors de la publication.')
     }
