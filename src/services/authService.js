@@ -8,6 +8,8 @@ const real = {
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get('/auth/me').then(r => r.data),
   changePassword: (d) => api.post('/auth/change-password', d).then(r => r.data),
+  adminCreateUser: (d) => api.post('/auth/admin/create-user', d).then(r => r.data),
+  updateUsername: (d) => api.patch('/auth/username', d).then(r => r.data),
 }
 
 export const login = (...a) => isMockEnabled() ? mock.login(...a) : real.login(...a)
@@ -15,3 +17,5 @@ export const register = (...a) => isMockEnabled() ? mock.register(...a) : real.r
 export const logout = (...a) => isMockEnabled() ? mock.logout(...a) : real.logout(...a)
 export const getMe = (...a) => isMockEnabled() ? mock.getMe(...a) : real.getMe(...a)
 export const changePassword = (...a) => isMockEnabled() ? mock.changePassword(...a) : real.changePassword(...a)
+export const adminCreateUser = (...a) => real.adminCreateUser(...a)
+export const updateUsername = (...a) => real.updateUsername(...a)

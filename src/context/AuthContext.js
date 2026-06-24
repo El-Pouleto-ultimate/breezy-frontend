@@ -28,6 +28,11 @@ export function AuthProvider({ children }) {
       setUnreadMsgCount(0)
       return
     }
+    // Les admins et modérateurs ne reçoivent pas de notifications de like/follow
+    if (user?.role === 'admin' || user?.role === 'moderator') {
+      setUnreadCount(0)
+      return
+    }
     try {
       const data = await getNotifications()
       if (data?.unread_count !== undefined) {
@@ -36,7 +41,7 @@ export function AuthProvider({ children }) {
         const list = Array.isArray(data) ? data : data?.data || []
         setUnreadCount(list.filter(n => !n.is_read && !n.read).length)
       }
-      
+
       const msgCount = await getUnreadMessagesCount()
       setUnreadMsgCount(msgCount)
     } catch (e) {

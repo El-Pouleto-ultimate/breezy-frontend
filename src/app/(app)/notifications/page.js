@@ -10,9 +10,18 @@ export default function NotificationsPage() {
   const [tab, setTab] = useState('all')
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
-  const { setUnreadCount } = useAuth()
+  const { user, setUnreadCount } = useAuth()
+
+  const isPrivilegedRole = user?.role === 'admin' || user?.role === 'moderator'
 
   useEffect(() => {
+    // Les admins et modérateurs n'ont pas de notifications de like/follow
+    if (isPrivilegedRole) {
+      setLoading(false)
+      setUnreadCount(0)
+      return
+    }
+
     setLoading(true)
     getNotifications()
       .then(res => {
@@ -32,14 +41,14 @@ export default function NotificationsPage() {
 
     markAllAsRead().catch(() => {})
     setUnreadCount(0)
-  }, [setUnreadCount])
+  }, [isPrivilegedRole, setUnreadCount])
 
   const filtered = tab === 'all' ? notifications : notifications.filter(n => n.type === 'mention')
 
   return (
     <AppShell title="Notifications">
       <div className="flex border-b border-breezy-border sticky top-0 z-30 bg-white">
-          {[{ id: 'all', label: 'Toutes' }, { id: 'mention', label: 'Mentions' }].map(t => (
+        {[{ id: 'all', label: 'Toutes' }, { id: 'mention', label: 'Mentions' }].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex-1 py-3 text-sm font-medium transition-colors relative ${tab === t.id ? 'text-breezy-dark' : 'text-breezy-muted hover:bg-breezy-hover'}`}>
             {t.label}
@@ -53,7 +62,7 @@ export default function NotificationsPage() {
         {!loading && filtered.length === 0 && (
           <p className="text-center text-breezy-muted text-sm py-12">Aucune notification pour l'instant.</p>
         )}
-        {!loading && filtered.map(n => <NotificationItem key={n._id} notif={n} />)}
+        {!loading && !isPrivilegedRole && filtered.map(n => <NotificationItem key={n._id} notif={n} />)}
       </div>
     </AppShell>
   )
