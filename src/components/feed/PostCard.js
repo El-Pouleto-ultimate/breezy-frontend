@@ -106,7 +106,7 @@ export default function PostCard({ post, onUpdate, hideActions = false }) {
 
           {post.media_urls?.length > 0 && (
             <div className="mt-2 rounded-2xl overflow-hidden border border-breezy-border">
-              <img src={post.media_urls[0]} alt="Post image" className="w-full object-cover max-h-72" />
+              <img src={post.media_urls[0]} alt="Image du post" className="w-full object-cover max-h-72" />
             </div>
           )}
 

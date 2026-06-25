@@ -33,18 +33,18 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
     <div>
       {/* Banner */}
       <div className="h-32 bg-gradient-to-r from-gray-200 to-gray-300 relative">
-        {profile.banner && <img src={profile.banner} className="w-full h-full object-cover" alt="Banner" />}
+        {profile.banner && <img src={profile.banner} className="w-full h-full object-cover" alt="Bannière" />}
       </div>
 
       {/* Avatar + action buttons */}
-      <div className="px-4 pb-3">
+      <div className="relative px-4 pb-3">
         <div className="flex items-end justify-between -mt-8 mb-3">
           <Avatar src={profile.avatar} username={profile.username} size="xl" className="ring-4 ring-white" />
           <div className="flex gap-2 mt-8">
             {isOwn
               ? <Link href="/profile/edit">
                   <Button variant="secondary" className="px-4 py-1.5 rounded-full font-semibold text-sm">
-                    Edit profile
+                    Modifier le profil
                   </Button>
                 </Link>
               : <Button variant={following ? 'unfollow' : 'follow'} onClick={toggle} loading={loading}>
@@ -104,12 +104,17 @@ export default function ProfileHeader({ profile, isOwn, activeTab = 'Posts', onT
 
       {/* Tabs */}
       <div className="border-b border-breezy-border flex">
-        {['Posts', 'Replies', 'Media', 'Likes'].map(tab => (
+        {[
+          { key: 'Posts',   label: 'Publications' },
+          { key: 'Replies', label: 'Réponses' },
+          { key: 'Media',   label: 'Médias' },
+          { key: 'Likes',   label: "J'aime" },
+        ].map(({ key, label }) => (
           <button
-            key={tab}
-            onClick={() => onTabChange && onTabChange(tab)}
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === tab ? 'text-breezy-dark border-b-2 border-breezy-dark' : 'text-breezy-muted hover:bg-breezy-hover'}`}>
-            {tab}
+            key={key}
+            onClick={() => onTabChange && onTabChange(key)}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === key ? 'text-breezy-dark border-b-2 border-breezy-dark' : 'text-breezy-muted hover:bg-breezy-hover'}`}>
+            {label}
           </button>
         ))}
       </div>

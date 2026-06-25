@@ -156,7 +156,7 @@ export default function ComposePage() {
           {/* Aperçu image */}
           {mediaPreview && (
             <div className="relative mt-2 max-w-xs">
-              <img src={mediaPreview} alt="Preview" className="rounded-2xl max-h-48 object-cover" />
+              <img src={mediaPreview} alt="Aperçu" className="rounded-2xl max-h-48 object-cover" />
               <button onClick={() => setMediaPreview(null)}
                 className="absolute top-2 right-2 bg-black/70 text-white p-1 rounded-full hover:bg-black">
                 <X size={16} />

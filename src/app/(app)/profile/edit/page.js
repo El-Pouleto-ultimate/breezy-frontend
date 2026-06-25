@@ -136,7 +136,7 @@ export default function EditProfilePage() {
         onClick={() => bannerInputRef.current?.click()}
         className="h-32 bg-gradient-to-r from-gray-200 to-gray-300 relative z-10 cursor-pointer hover:brightness-90 transition-all group"
       >
-        {bannerPreview && <img src={bannerPreview} className="w-full h-full object-cover" alt="Banner" />}
+        {bannerPreview && <img src={bannerPreview} className="w-full h-full object-cover" alt="Bannière" />}
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="bg-black/50 rounded-full p-2 backdrop-blur-sm">
             <Camera size={18} />

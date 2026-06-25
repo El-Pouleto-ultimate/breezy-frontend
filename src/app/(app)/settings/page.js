@@ -173,7 +173,7 @@ export default function SettingsPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-breezy-muted mb-2 uppercase tracking-wider">
-                      Email
+                      Courriel
                     </label>
                     <input
                       type="email"
