@@ -1,67 +1,46 @@
-# 🌬️ Breezy — Next.js Frontend
+# Breezy: web client
 
-Réseau social léger, inspiré de Twitter/X. Interface mobile-first, React 18 + Next.js 14 App Router.
+The web front end of [Breezy](https://github.com/El-Pouleto-ultimate/breezy-infra), a Twitter-like social
+network built as microservices.
 
-## Stack
-- **Next.js 14** (App Router)
-- **React 18**
-- **Tailwind CSS 3**
-- **Axios** (appels API)
-- **date-fns** (formatage des dates)
+Team project at CESI École d'Ingénieurs (distributed applications, June 2026).
 
-## Lancer le projet
+Stack: Next.js 14, React 18, Tailwind CSS 3, axios.
+
+## Features
+
+- Sign up, sign in, and sessions that refresh themselves: on a 401, the client refreshes its token once and
+  retries the request.
+- Home feed, posts with images, likes, reposts, replies and @mentions.
+- Profiles with follow and unfollow, user search, notifications.
+- Settings, admin account creation, and legal pages.
+
+Pages: `/connect`, `/signin`, `/register`, `/home`, `/search`, `/notifications`, `/profile`, `/compose`,
+`/reply`, `/settings`, `/legal/*`. The `/messages` page is interface only: there is no messaging back end.
+
+## Configuration
+
+All API calls go through one axios client, [`src/services/api.js`](src/services/api.js).
+
+| Variable | Role | Default |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | base URL of the API | `/api`, routed to the gateway by nginx |
+| `NEXT_PUBLIC_TOKEN_KEY` | localStorage key of the access token | `breezy_token` |
+| `NEXT_PUBLIC_USE_MOCKS` | `true` serves mock data, without any back end | — |
+
+## Run
+
+The whole stack runs with Docker Compose from [breezy-infra](https://github.com/El-Pouleto-ultimate/breezy-infra).
+On its own:
 
 ```bash
-# 1. Installer les dépendances
 npm install
-
-# 2. Configurer les variables d'environnement
-cp .env.local.example .env.local
-# → édite NEXT_PUBLIC_API_URL avec l'URL de ton API Gateway
-
-# 3. Démarrer en développement
-npm run dev
-# → http://localhost:3000
+npm run dev       # http://localhost:3000
+npm run build && npm start
+npm run lint
 ```
 
-## Structure
-```
-src/
-├── app/
-│   ├── (auth)/          # Pages publiques: connect, signin, register
-│   └── (app)/           # Pages protégées: home, search, notifications, messages, profile, compose, reply
-├── components/
-│   ├── ui/              # Avatar, Button, Input, Spinner
-│   ├── layout/          # AppShell, TopBar, BottomNav
-│   ├── feed/            # PostCard, PostList, PostActions, ComposeFab
-│   ├── profile/         # ProfileHeader
-│   ├── notifications/   # NotificationItem, NotificationList
-│   ├── messages/        # ConversationList, MessageThread, MessageInput
-│   └── search/          # SearchBar
-├── hooks/               # usePosts, useLike, useFollow, useComments, useAuth
-├── services/            # api.js, authService, postService, userService...
-├── context/             # AuthContext
-└── utils/               # formatDate, validators
-```
+## Team
 
-## Pages
-| Route | Description |
-|-------|-------------|
-| `/connect` | Landing — Créer un compte / S'authentifier |
-| `/signin` | Connexion sécurisée (Fx2) |
-| `/register` | Création de compte (Fx1) |
-| `/home` | Fil d'actualités (Fx3, Fx5, Fx6) |
-| `/search` | Recherche + tendances (Fx13) |
-| `/notifications` | Notifications like/follow/mention (Fx14-16) |
-| `/messages` | Messages privés (Fx17) |
-| `/profile` | Profil utilisateur connecté (Fx10, Fx11) |
-| `/profile/[userId]` | Profil d'un autre utilisateur (Fx9) |
-| `/profile/edit` | Modifier le profil (Fx10) |
-| `/compose` | Composer un post (Fx3) |
-| `/reply` | Répondre à un post (Fx7) |
-
-## Variables d'environnement
-```
-NEXT_PUBLIC_API_URL=http://localhost:4000/api
-NEXT_PUBLIC_TOKEN_KEY=breezy_token
-```
+[Estebge](https://github.com/Estebge), [haguetm](https://github.com/haguetm),
+[Jessica14112005](https://github.com/Jessica14112005), [Tuture57](https://github.com/Tuture57).
